@@ -1,0 +1,433 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1B837279357CB3067CE4DE96 /* PubMediaResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D484BE37A5FA53FBCC8B149B /* PubMediaResponse.swift */; };
+		234CE5C3B1C446D3D5963C90 /* BibleBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = C874F21BA209C84278BD073F /* BibleBook.swift */; };
+		29E7B87856EE2C9952F464FC /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B203DDD1A7EFC467BFCE8E3 /* MediaPlayer.framework */; };
+		2D37B42C47FF8106FC2B2E72 /* WOLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5359917CB8730DCCDFA37382 /* WOLParser.swift */; };
+		3BB57586B0DC839BBDB6848E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B760C3AB5E14AEA6839655 /* AppDelegate.swift */; };
+		4A5024607EEEC49A49A2AD5B /* WeeklySchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F251F922ACFEEF9D9612B04 /* WeeklySchedule.swift */; };
+		4F9674A4DB1B700F66CCB351 /* JWAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A220D568E46ABA4F7D84A /* JWAPIService.swift */; };
+		52350C737E4C185C968A3FB7 /* MeetingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38AB10578DB5519E24F1131A /* MeetingsView.swift */; };
+		543205E4B556CFB1C681E3B3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5143AA4ADD6784301468E3C0 /* ContentView.swift */; };
+		64F37CDFC5A8707C58B043FF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B15AFF5979E81B30FC50094 /* AVFoundation.framework */; };
+		85EB51FF0A58ABB03B20033F /* BroadcastingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92706DE01BBB10BCC4175DB5 /* BroadcastingView.swift */; };
+		87B0250A64E7D46913EB780B /* BibleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A82303F17543D856383F385 /* BibleView.swift */; };
+		B62041E64B0DC1DE39A702C9 /* SongsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50CB6F41C9E8E1342FAC202 /* SongsView.swift */; };
+		B74F0460DE49F14598F019D0 /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FC5D08401B3746F1ABA43A /* CarPlaySceneDelegate.swift */; };
+		C0B74E49ACF65E151EE4291E /* JWPlayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA60B0BA9DBD478DBD2F8191 /* JWPlayApp.swift */; };
+		CA79F3C49408DA3CDC52E0B5 /* PlayerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B159486C7C867C49789F1063 /* PlayerBar.swift */; };
+		ED1EF6C4E753E6BB7E416584 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146DC32DB12DEF5389FA0CD6 /* AudioPlayer.swift */; };
+		EECBC1E803D1302BF4B4798E /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FED5553676D95B3AA608F5 /* CacheService.swift */; };
+		F7D5B9838604FD1F74F63275 /* CarPlayTemplateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CE43C8C08327105900780 /* CarPlayTemplateProvider.swift */; };
+		FCD2ACDEB33D4EB5A9E8D1D7 /* CarPlay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ACF58955DDC3240F4F01786 /* CarPlay.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0A82303F17543D856383F385 /* BibleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleView.swift; sourceTree = "<group>"; };
+		0B7CE43C8C08327105900780 /* CarPlayTemplateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlayTemplateProvider.swift; sourceTree = "<group>"; };
+		146DC32DB12DEF5389FA0CD6 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		1B203DDD1A7EFC467BFCE8E3 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		38AB10578DB5519E24F1131A /* MeetingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsView.swift; sourceTree = "<group>"; };
+		3B15AFF5979E81B30FC50094 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		5143AA4ADD6784301468E3C0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		5359917CB8730DCCDFA37382 /* WOLParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WOLParser.swift; sourceTree = "<group>"; };
+		5ACF58955DDC3240F4F01786 /* CarPlay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CarPlay.framework; path = System/Library/Frameworks/CarPlay.framework; sourceTree = SDKROOT; };
+		92706DE01BBB10BCC4175DB5 /* BroadcastingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BroadcastingView.swift; sourceTree = "<group>"; };
+		96FC5D08401B3746F1ABA43A /* CarPlaySceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlaySceneDelegate.swift; sourceTree = "<group>"; };
+		9A14187B73932408DF704975 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		9F251F922ACFEEF9D9612B04 /* WeeklySchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklySchedule.swift; sourceTree = "<group>"; };
+		B159486C7C867C49789F1063 /* PlayerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerBar.swift; sourceTree = "<group>"; };
+		B1FED5553676D95B3AA608F5 /* CacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheService.swift; sourceTree = "<group>"; };
+		BA60B0BA9DBD478DBD2F8191 /* JWPlayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWPlayApp.swift; sourceTree = "<group>"; };
+		C50CB6F41C9E8E1342FAC202 /* SongsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsView.swift; sourceTree = "<group>"; };
+		C874F21BA209C84278BD073F /* BibleBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleBook.swift; sourceTree = "<group>"; };
+		D484BE37A5FA53FBCC8B149B /* PubMediaResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubMediaResponse.swift; sourceTree = "<group>"; };
+		E1B760C3AB5E14AEA6839655 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F13D067F367968EA07797129 /* JWPlay.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = JWPlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3D49D4AD18A7E2D1B4DAE93 /* JWPlay.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JWPlay.entitlements; sourceTree = "<group>"; };
+		FC6A220D568E46ABA4F7D84A /* JWAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWAPIService.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		45125447E5DAFAE75E02F721 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCD2ACDEB33D4EB5A9E8D1D7 /* CarPlay.framework in Frameworks */,
+				64F37CDFC5A8707C58B043FF /* AVFoundation.framework in Frameworks */,
+				29E7B87856EE2C9952F464FC /* MediaPlayer.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		238272B2D0FFED5869E9EEBA /* JWPlay */ = {
+			isa = PBXGroup;
+			children = (
+				9A14187B73932408DF704975 /* Info.plist */,
+				F3D49D4AD18A7E2D1B4DAE93 /* JWPlay.entitlements */,
+				EF29068D0CF3C6BAE39B43F5 /* App */,
+				42A12F65061E86C1A0DAF55E /* CarPlay */,
+				336CCD14E8886B2BD42D729D /* Models */,
+				44BED2BF963D808DA32FEE3F /* Services */,
+				A6A6DC101FDA7F6A34FB6731 /* UI */,
+			);
+			path = JWPlay;
+			sourceTree = "<group>";
+		};
+		336CCD14E8886B2BD42D729D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C874F21BA209C84278BD073F /* BibleBook.swift */,
+				D484BE37A5FA53FBCC8B149B /* PubMediaResponse.swift */,
+				9F251F922ACFEEF9D9612B04 /* WeeklySchedule.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		42A12F65061E86C1A0DAF55E /* CarPlay */ = {
+			isa = PBXGroup;
+			children = (
+				96FC5D08401B3746F1ABA43A /* CarPlaySceneDelegate.swift */,
+				0B7CE43C8C08327105900780 /* CarPlayTemplateProvider.swift */,
+			);
+			path = CarPlay;
+			sourceTree = "<group>";
+		};
+		44BED2BF963D808DA32FEE3F /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				146DC32DB12DEF5389FA0CD6 /* AudioPlayer.swift */,
+				B1FED5553676D95B3AA608F5 /* CacheService.swift */,
+				FC6A220D568E46ABA4F7D84A /* JWAPIService.swift */,
+				5359917CB8730DCCDFA37382 /* WOLParser.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		8E5AECDC215F829055568972 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3B15AFF5979E81B30FC50094 /* AVFoundation.framework */,
+				5ACF58955DDC3240F4F01786 /* CarPlay.framework */,
+				1B203DDD1A7EFC467BFCE8E3 /* MediaPlayer.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9BD648BFF4D0A582913D9AFC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F13D067F367968EA07797129 /* JWPlay.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A6A6DC101FDA7F6A34FB6731 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				0A82303F17543D856383F385 /* BibleView.swift */,
+				92706DE01BBB10BCC4175DB5 /* BroadcastingView.swift */,
+				5143AA4ADD6784301468E3C0 /* ContentView.swift */,
+				38AB10578DB5519E24F1131A /* MeetingsView.swift */,
+				B159486C7C867C49789F1063 /* PlayerBar.swift */,
+				C50CB6F41C9E8E1342FAC202 /* SongsView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		D5ABF0BF45F5339361DA14AE = {
+			isa = PBXGroup;
+			children = (
+				238272B2D0FFED5869E9EEBA /* JWPlay */,
+				8E5AECDC215F829055568972 /* Frameworks */,
+				9BD648BFF4D0A582913D9AFC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EF29068D0CF3C6BAE39B43F5 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				E1B760C3AB5E14AEA6839655 /* AppDelegate.swift */,
+				BA60B0BA9DBD478DBD2F8191 /* JWPlayApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3E887D86880C2B30EA7EB8A3 /* JWPlay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26FF22770F062DD182416E97 /* Build configuration list for PBXNativeTarget "JWPlay" */;
+			buildPhases = (
+				68253A9BE02281C1C0FAF419 /* Sources */,
+				45125447E5DAFAE75E02F721 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JWPlay;
+			packageProductDependencies = (
+			);
+			productName = JWPlay;
+			productReference = F13D067F367968EA07797129 /* JWPlay.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BCFC5B845FF6DD7429C3045B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					3E887D86880C2B30EA7EB8A3 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = D7D96C3DF8D2B01346541715 /* Build configuration list for PBXProject "JWPlay" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D5ABF0BF45F5339361DA14AE;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 9BD648BFF4D0A582913D9AFC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3E887D86880C2B30EA7EB8A3 /* JWPlay */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		68253A9BE02281C1C0FAF419 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3BB57586B0DC839BBDB6848E /* AppDelegate.swift in Sources */,
+				ED1EF6C4E753E6BB7E416584 /* AudioPlayer.swift in Sources */,
+				234CE5C3B1C446D3D5963C90 /* BibleBook.swift in Sources */,
+				87B0250A64E7D46913EB780B /* BibleView.swift in Sources */,
+				85EB51FF0A58ABB03B20033F /* BroadcastingView.swift in Sources */,
+				EECBC1E803D1302BF4B4798E /* CacheService.swift in Sources */,
+				B74F0460DE49F14598F019D0 /* CarPlaySceneDelegate.swift in Sources */,
+				F7D5B9838604FD1F74F63275 /* CarPlayTemplateProvider.swift in Sources */,
+				543205E4B556CFB1C681E3B3 /* ContentView.swift in Sources */,
+				4F9674A4DB1B700F66CCB351 /* JWAPIService.swift in Sources */,
+				C0B74E49ACF65E151EE4291E /* JWPlayApp.swift in Sources */,
+				52350C737E4C185C968A3FB7 /* MeetingsView.swift in Sources */,
+				CA79F3C49408DA3CDC52E0B5 /* PlayerBar.swift in Sources */,
+				1B837279357CB3067CE4DE96 /* PubMediaResponse.swift in Sources */,
+				B62041E64B0DC1DE39A702C9 /* SongsView.swift in Sources */,
+				2D37B42C47FF8106FC2B2E72 /* WOLParser.swift in Sources */,
+				4A5024607EEEC49A49A2AD5B /* WeeklySchedule.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1B22EA75DE0FE9068B54FF87 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		21D53B7D432BCCD6BDD30073 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = JWPlay/JWPlay.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = JWPlay/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.farace.JWPlay;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B7310FB2B9F8EFED80E0A0B8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = JWPlay/JWPlay.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = JWPlay/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.farace.JWPlay;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F470EAE87C67F56D66878EAD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		26FF22770F062DD182416E97 /* Build configuration list for PBXNativeTarget "JWPlay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				21D53B7D432BCCD6BDD30073 /* Debug */,
+				B7310FB2B9F8EFED80E0A0B8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D7D96C3DF8D2B01346541715 /* Build configuration list for PBXProject "JWPlay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B22EA75DE0FE9068B54FF87 /* Debug */,
+				F470EAE87C67F56D66878EAD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BCFC5B845FF6DD7429C3045B /* Project object */;
+}
