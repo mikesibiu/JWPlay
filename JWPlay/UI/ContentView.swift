@@ -1,24 +1,21 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject private var player: AudioPlayer
-
     var body: some View {
-        VStack(spacing: 0) {
-            TabView {
-                MeetingsView()
-                    .tabItem { Label("Meetings", systemImage: "calendar") }
+        TabView {
+            MeetingsView()
+                .tabItem { Label("Meetings", systemImage: "calendar") }
 
-                BibleView()
-                    .tabItem { Label("Bible", systemImage: "text.book.closed.fill") }
+            BibleView()
+                .tabItem { Label("Bible", systemImage: "text.book.closed.fill") }
 
-                SongsView()
-                    .tabItem { Label("Songs", systemImage: "music.note") }
+            SongsView()
+                .tabItem { Label("Songs", systemImage: "music.note") }
 
-                BroadcastingView()
-                    .tabItem { Label("Broadcasting", systemImage: "tv") }
-            }
-
+            BroadcastingView()
+                .tabItem { Label("Broadcasting", systemImage: "tv") }
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
             PlayerBar()
         }
     }

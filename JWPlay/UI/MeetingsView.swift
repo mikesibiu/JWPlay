@@ -21,8 +21,13 @@ struct MeetingsView: View {
                 } else if let schedule = schedules[selected] {
                     WeekContentView(schedule: schedule)
                 } else {
-                    ContentUnavailableView("No Content", systemImage: "calendar.badge.exclamationmark",
-                                          description: Text("Unable to load meeting content"))
+                    VStack(spacing: 12) {
+                        Image(systemName: "calendar.badge.exclamationmark")
+                            .font(.largeTitle).foregroundStyle(.secondary)
+                        Text("Unable to load meeting content")
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .navigationTitle("Weekly Meetings")

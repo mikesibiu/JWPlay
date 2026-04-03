@@ -1,6 +1,5 @@
 import AVFoundation
 import MediaPlayer
-import Combine
 
 @MainActor
 final class AudioPlayer: ObservableObject {
@@ -14,10 +13,11 @@ final class AudioPlayer: ObservableObject {
     private var player: AVQueuePlayer?
     private var playerItems: [AVPlayerItem] = []
     private var currentIndex = 0
-    private var timeObserver: Any?
-    private var statusObserver: AnyCancellable?
+    // Single token — replaced on every play() to prevent observer accumulation
+    private var itemEndObserver: NSObjectProtocol?
 
     private init() {
+        // Audio session is set up once here; AppDelegate does NOT duplicate this
         setupAudioSession()
         setupRemoteCommands()
     }
@@ -54,13 +54,13 @@ final class AudioPlayer: ObservableObject {
     }
 
     func skipForward() {
+        // advanceToNextItem fires AVPlayerItemDidPlayToEndTime, which calls playerItemDidEnd.
+        // playerItemDidEnd owns the currentIndex increment — don't duplicate it here.
         player?.advanceToNextItem()
-        currentIndex += 1
         updateNowPlaying()
     }
 
     func skipBackward() {
-        // Seek to zero on current item; if near start, re-queue from prior index
         if let player, let current = player.currentItem {
             let pos = current.currentTime().seconds
             if pos < 3 && currentIndex > 0 {
@@ -72,6 +72,7 @@ final class AudioPlayer: ObservableObject {
     }
 
     func stop() {
+        removeItemEndObserver()
         player?.pause()
         player = nil
         playerItems = []
@@ -92,55 +93,32 @@ final class AudioPlayer: ObservableObject {
 
     private func setupAudioSession() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(
-                .playback, mode: .spokenAudio, options: []
-            )
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("AudioSession error: \(error)")
         }
     }
 
-    private func setupRemoteCommands() {
-        let center = MPRemoteCommandCenter.shared()
-
-        center.playCommand.addTarget { [weak self] _ in
-            guard let self else { return .commandFailed }
-            Task { @MainActor in self.togglePlayPause() }
-            return .success
-        }
-        center.pauseCommand.addTarget { [weak self] _ in
-            guard let self else { return .commandFailed }
-            Task { @MainActor in self.togglePlayPause() }
-            return .success
-        }
-        center.nextTrackCommand.addTarget { [weak self] _ in
-            guard let self else { return .commandFailed }
-            Task { @MainActor in self.skipForward() }
-            return .success
-        }
-        center.previousTrackCommand.addTarget { [weak self] _ in
-            guard let self else { return .commandFailed }
-            Task { @MainActor in self.skipBackward() }
-            return .success
-        }
-        center.togglePlayPauseCommand.addTarget { [weak self] _ in
-            guard let self else { return .commandFailed }
-            Task { @MainActor in self.togglePlayPause() }
-            return .success
-        }
-    }
-
     private func observeItemEnd() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(playerItemDidEnd),
-            name: .AVPlayerItemDidPlayToEndTime,
-            object: nil
-        )
+        removeItemEndObserver()
+        itemEndObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in self?.playerItemDidEnd() }
+        }
     }
 
-    @objc private func playerItemDidEnd() {
+    private func removeItemEndObserver() {
+        if let token = itemEndObserver {
+            NotificationCenter.default.removeObserver(token)
+            itemEndObserver = nil
+        }
+    }
+
+    private func playerItemDidEnd() {
         currentIndex += 1
         if currentIndex >= playerItems.count {
             isPlaying = false
@@ -148,10 +126,19 @@ final class AudioPlayer: ObservableObject {
         updateNowPlaying()
     }
 
+    private func setupRemoteCommands() {
+        let center = MPRemoteCommandCenter.shared()
+        center.playCommand.addTarget          { [weak self] _ in Task { @MainActor [weak self] in self?.togglePlayPause() }; return .success }
+        center.pauseCommand.addTarget         { [weak self] _ in Task { @MainActor [weak self] in self?.togglePlayPause() }; return .success }
+        center.nextTrackCommand.addTarget     { [weak self] _ in Task { @MainActor [weak self] in self?.skipForward() };     return .success }
+        center.previousTrackCommand.addTarget { [weak self] _ in Task { @MainActor [weak self] in self?.skipBackward() };    return .success }
+        center.togglePlayPauseCommand.addTarget { [weak self] _ in Task { @MainActor [weak self] in self?.togglePlayPause() }; return .success }
+    }
+
     private func updateNowPlaying() {
         var info: [String: Any] = [
-            MPMediaItemPropertyTitle:           currentTitle,
-            MPMediaItemPropertyArtist:          currentSubtitle,
+            MPMediaItemPropertyTitle:            currentTitle,
+            MPMediaItemPropertyArtist:           currentSubtitle,
             MPNowPlayingInfoPropertyPlaybackRate: isPlaying ? 1.0 : 0.0,
             MPMediaItemPropertyMediaType:        MPMediaType.podcast.rawValue,
         ]

@@ -67,12 +67,17 @@ struct WeekDate {
     }
 
     // Watchtower issues to try: offset -2 first, then -3
+    // Uses DateComponents arithmetic to avoid negative-modulo bugs in Jan/Feb
     var watchtowerIssuesToTry: [String] {
         [2, 3].map { offset in
-            let cal = Calendar(identifier: .gregorian)
-            let comps = cal.dateComponents([.year, .month], from: monday)
-            let total = comps.year! * 12 + (comps.month! - 1) - offset
-            return String(format: "%04d%02d", total / 12, total % 12 + 1)
+            var cal = Calendar(identifier: .gregorian)
+            cal.locale = Locale(identifier: "en_US")
+            var comps = cal.dateComponents([.year, .month], from: monday)
+            comps.month! -= offset
+            let adjusted = cal.date(from: comps) ?? monday
+            let year  = cal.component(.year,  from: adjusted)
+            let month = cal.component(.month, from: adjusted)
+            return String(format: "%04d%02d", year, month)
         }
     }
 

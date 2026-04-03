@@ -13,11 +13,15 @@ struct BroadcastingView: View {
                     ProgressView("Loading broadcasts…")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if failed || tracks.isEmpty {
-                    ContentUnavailableView(
-                        "Broadcasting Unavailable",
-                        systemImage: "tv.slash",
-                        description: Text("JW Broadcasting content could not be loaded.")
-                    )
+                    VStack(spacing: 12) {
+                        Image(systemName: "tv.slash")
+                            .font(.largeTitle).foregroundStyle(.secondary)
+                        Text("JW Broadcasting content could not be loaded.")
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
                 } else {
                     List(tracks) { track in
                         Button {

@@ -17,13 +17,16 @@ actor JWAPIService {
     // MARK: - Public API
 
     func buildWeeklySchedule(for weekDate: WeekDate) async -> WeeklySchedule {
-        async let mwbResult   = fetchMWBTrack(weekDate: weekDate)
-        async let wolResult   = fetchWOLSchedule(weekDate: weekDate)
-        async let wtResult    = fetchWatchtowerTrack(weekDate: weekDate)
-        async let nwtResult   = ensureNWT()
-        async let lfbResult   = ensureLFB()
+        // Fetch MWB first — WOL needs its docid, so they cannot be parallel.
+        // Watchtower, NWT, and LFB are independent and run concurrently.
+        let mwb = await fetchMWBTrack(weekDate: weekDate)
 
-        let (mwb, wol, wt, nwtAll, lfbAll) = await (mwbResult, wolResult, wtResult, nwtResult, lfbResult)
+        async let wolResult = fetchWOLSchedule(docid: mwb?.docid)
+        async let wtResult  = fetchWatchtowerTrack(weekDate: weekDate)
+        async let nwtResult = ensureNWT()
+        async let lfbResult = ensureLFB()
+
+        let (wol, wt, nwtAll, lfbAll) = await (wolResult, wtResult, nwtResult, lfbResult)
 
         // Bible reading URLs
         var bibleURLs: [URL] = []
@@ -125,11 +128,8 @@ actor JWAPIService {
         let cbsLessons: [Int]
     }
 
-    private func fetchWOLSchedule(weekDate: WeekDate) async -> WOLSchedule? {
-        // We need the docid from the MWB track first
-        guard let mwbTrack = await fetchMWBTrack(weekDate: weekDate),
-              let docid = mwbTrack.docid else { return nil }
-
+    private func fetchWOLSchedule(docid: Int?) async -> WOLSchedule? {
+        guard let docid else { return nil }
         let urlString = "\(wolBase)/\(docid)"
         guard let url = URL(string: urlString),
               let (data, _) = try? await session.data(from: url),
@@ -174,7 +174,7 @@ actor JWAPIService {
     /// Extracts the leading lesson number from an LFB track title, e.g. "68 Title" → 68.
     /// Mirrors Android's LfbLessonCatalog: Regex("^(\\d{1,3})").find(title)
     private func lfbLeadingNumber(_ track: PubMediaTrack) -> Int? {
-        let text = track.title ?? track.label ?? ""
+        let text = track.title.isEmpty ? (track.label ?? "") : track.title
         var digits = ""
         for ch in text.prefix(4) {
             if ch.isNumber { digits.append(ch) } else { break }

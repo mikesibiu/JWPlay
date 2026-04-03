@@ -135,9 +135,12 @@ final class CarPlayTemplateProvider {
         let section = CPListSection(items: items)
         let template = CPListTemplate(title: weekDate.displayLabel, sections: [section])
 
-        // Replace the loading template
-        interfaceController?.popTemplate(animated: false, completion: nil)
-        interfaceController?.pushTemplate(template, animated: true, completion: nil)
+        // Wait for pop to complete before pushing — avoids template stack race condition
+        guard let ic = interfaceController else { return }
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            ic.popTemplate(animated: false) { _, _ in continuation.resume() }
+        }
+        ic.pushTemplate(template, animated: true, completion: nil)
     }
 
     // MARK: - Bible & Songs
@@ -287,6 +290,10 @@ final class CarPlayTemplateProvider {
     private func makeBrowsableItem(_ text: String, detail: String?, systemImage: String? = nil) -> CPListItem {
         let item = CPListItem(text: text, detailText: detail)
         item.accessoryType = .disclosureIndicator
+        if let name = systemImage,
+           let image = UIImage(systemName: name)?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal) {
+            item.setImage(image)
+        }
         return item
     }
 

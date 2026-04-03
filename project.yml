@@ -37,16 +37,23 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
           UISceneConfigurations:
-            UIWindowSceneSessionRoleApplication:
-              - UISceneConfigurationName: Default Configuration
-                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).SceneDelegate
             CPTemplateApplicationSceneSessionRoleApplication:
               - UISceneConfigurationName: CarPlay Configuration
                 UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate
         UIBackgroundModes:
           - audio
         NSAppTransportSecurity:
-          NSAllowsArbitraryLoads: true
+          NSAllowsArbitraryLoads: false
+          NSExceptionDomains:
+            b.jw-cdn.org:
+              NSExceptionAllowsInsecureHTTPLoads: false
+              NSIncludesSubdomains: true
+            wol.jw.org:
+              NSExceptionAllowsInsecureHTTPLoads: false
+            mediator.jw.org:
+              NSExceptionAllowsInsecureHTTPLoads: false
+            download-a.akamaihd.net:
+              NSExceptionAllowsInsecureHTTPLoads: false
         UIRequiredDeviceCapabilities:
           - armv7
         UISupportedInterfaceOrientations:

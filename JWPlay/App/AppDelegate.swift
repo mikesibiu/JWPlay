@@ -1,5 +1,4 @@
 import UIKit
-import AVFoundation
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
 
@@ -8,23 +7,13 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         CacheService.shared.clearIfVersionChanged()
-        activateAudioSession()
+        // AudioPlayer.shared initialises the AVAudioSession in its own init —
+        // touching the singleton here ensures it's ready before any playback request.
+        _ = AudioPlayer.shared
         return true
     }
-
-    private func activateAudioSession() {
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            print("AVAudioSession setup failed: \(error)")
-        }
-    }
 }
-
-// MARK: - Scene delegate for the main window (required alongside CarPlay scene)
-final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    var window: UIWindow?
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
-               options connectionOptions: UIScene.ConnectionOptions) { }
-}
+// Note: No SceneDelegate class here. SwiftUI's @main App protocol manages the
+// UIWindowScene automatically. Registering a custom UISceneDelegateClassName for
+// UIWindowSceneSessionRoleApplication would override SwiftUI's window management
+// and cause a black screen — do not add one.
