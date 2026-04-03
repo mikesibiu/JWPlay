@@ -23,29 +23,31 @@ struct BroadcastingView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding()
                 } else {
-                    List(tracks) { track in
-                        Button {
-                            player.play(urls: [track.url], title: track.title,
-                                        subtitle: track.subtitle, artwork: "tv.fill")
-                        } label: {
-                            HStack {
-                                Image(systemName: track.isGBUpdate ? "person.bust.fill" : "tv.fill")
-                                    .foregroundStyle(track.isGBUpdate ? .purple : .blue)
-                                    .frame(width: 28)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(track.title).lineLimit(2)
-                                    if !track.subtitle.isEmpty {
-                                        Text(track.subtitle)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
+                    List {
+                        ForEach(tracks) { track in
+                            Button {
+                                player.play(urls: [track.url], title: track.title,
+                                            subtitle: track.subtitle, artwork: "tv.fill")
+                            } label: {
+                                HStack {
+                                    Image(systemName: track.isGBUpdate ? "person.bust.fill" : "tv.fill")
+                                        .foregroundStyle(track.isGBUpdate ? Color.purple : Color.blue)
+                                        .frame(width: 28)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(track.title).lineLimit(2)
+                                        if !track.subtitle.isEmpty {
+                                            Text(track.subtitle)
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                        }
                                     }
+                                    Spacer()
+                                    Image(systemName: "play.circle")
+                                        .foregroundStyle(Color.accentColor)
                                 }
-                                Spacer()
-                                Image(systemName: "play.circle")
-                                    .foregroundStyle(.accent)
                             }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                     .listStyle(.plain)
                 }

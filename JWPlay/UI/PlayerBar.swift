@@ -8,7 +8,7 @@ struct PlayerBar: View {
             HStack(spacing: 12) {
                 Image(systemName: player.currentArtwork)
                     .font(.title3)
-                    .foregroundStyle(.accent)
+                    .foregroundStyle(Color.accentColor)
                     .frame(width: 36)
 
                 VStack(alignment: .leading, spacing: 2) {

@@ -23,8 +23,8 @@ struct SongsView: View {
                     List {
                         ForEach(groups.indices, id: \.self) { idx in
                             let group = groups[idx]
-                            let first = group.first!.track
-                            let last  = group.last!.track
+                            let first = group.first?.track ?? 0
+                            let last  = group.last?.track  ?? 0
                             let label = String(format: "Songs %03d–%03d", first, last)
                             NavigationLink(label) {
                                 SongGroupView(songs: group)
@@ -54,26 +54,28 @@ struct SongGroupView: View {
     @EnvironmentObject private var player: AudioPlayer
 
     var body: some View {
-        List(songs, id: \.track) { song in
-            Button {
-                guard let url = song.url else { return }
-                player.play(urls: [url],
-                            title: song.title,
-                            subtitle: String(format: "Kingdom Song %03d", song.track),
-                            artwork: "music.note")
-            } label: {
-                HStack {
-                    Text(String(format: "%03d", song.track))
-                        .font(.body.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                        .frame(width: 40, alignment: .leading)
-                    Text(song.title)
-                    Spacer()
-                    Image(systemName: "play.circle")
-                        .foregroundStyle(.accent)
+        List {
+            ForEach(songs, id: \.track) { song in
+                Button {
+                    guard let url = song.url else { return }
+                    player.play(urls: [url],
+                                title: song.title,
+                                subtitle: String(format: "Kingdom Song %03d", song.track),
+                                artwork: "music.note")
+                } label: {
+                    HStack {
+                        Text(String(format: "%03d", song.track))
+                            .font(.body.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                            .frame(width: 40, alignment: .leading)
+                        Text(song.title)
+                        Spacer()
+                        Image(systemName: "play.circle")
+                            .foregroundStyle(Color.accentColor)
+                    }
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
     }
 }

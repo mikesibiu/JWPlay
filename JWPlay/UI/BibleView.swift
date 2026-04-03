@@ -118,7 +118,7 @@ struct BookChaptersView: View {
                     Text("Chapter \(track.track)")
                     Spacer()
                     Image(systemName: "play.circle")
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(Color.accentColor)
                 }
             }
             .buttonStyle(.plain)

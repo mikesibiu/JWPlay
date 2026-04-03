@@ -50,7 +50,7 @@
 		C874F21BA209C84278BD073F /* BibleBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleBook.swift; sourceTree = "<group>"; };
 		D484BE37A5FA53FBCC8B149B /* PubMediaResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubMediaResponse.swift; sourceTree = "<group>"; };
 		E1B760C3AB5E14AEA6839655 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		F13D067F367968EA07797129 /* JWPlay.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = JWPlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F13D067F367968EA07797129 /* JWPlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JWPlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3D49D4AD18A7E2D1B4DAE93 /* JWPlay.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JWPlay.entitlements; sourceTree = "<group>"; };
 		FC6A220D568E46ABA4F7D84A /* JWAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWAPIService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -193,7 +193,6 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					3E887D86880C2B30EA7EB8A3 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -317,7 +316,7 @@
 				CODE_SIGN_ENTITLEMENTS = JWPlay/JWPlay.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = UG3A77FKB3;
 				INFOPLIST_FILE = JWPlay/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -336,7 +335,7 @@
 				CODE_SIGN_ENTITLEMENTS = JWPlay/JWPlay.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = UG3A77FKB3;
 				INFOPLIST_FILE = JWPlay/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -253,7 +253,7 @@ final class CarPlayTemplateProvider {
             let label = String(format: "Songs %03d–%03d", startNum, endNum)
             let item = makeBrowsableItem(label, detail: nil)
             item.handler = { [weak self] _, done in
-                self?.showSongList(songs: Array(sorted[start...end]))
+                self?.showSongList(Array(sorted[start...end]))
                 done()
             }
             return item
