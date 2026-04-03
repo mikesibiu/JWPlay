@@ -40,10 +40,11 @@ struct PlayerBar: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(.bar)
+            .background(Color(uiColor: .secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: .black.opacity(0.12), radius: 6, y: -2)
             .padding(.horizontal, 8)
-            .padding(.bottom, 4)
+            .padding(.bottom, 8)
             .transition(.move(edge: .bottom).combined(with: .opacity))
             .animation(.spring(duration: 0.3), value: player.currentTitle)
         }

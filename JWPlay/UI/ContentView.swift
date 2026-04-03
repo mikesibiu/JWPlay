@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject private var player: AudioPlayer
+
     var body: some View {
         TabView {
             MeetingsView()
@@ -16,7 +18,10 @@ struct ContentView: View {
                 .tabItem { Label("Broadcasting", systemImage: "tv") }
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            PlayerBar()
+            // Only inset when something is playing — avoids empty space at bottom
+            if !player.currentTitle.isEmpty {
+                PlayerBar()
+            }
         }
     }
 }
