@@ -64,10 +64,12 @@ struct MediatorMediaItem: Codable {
         case files
     }
 
+    /// Prefer "240p" label (smallest video, audio-only playback) — mirrors Android PREFERRED_VIDEO_QUALITY.
+    /// Falls back to first available file URL.
     var firstAudioURL: URL? {
-        files?
-            .first { $0.mimeType?.hasPrefix("audio") == true || $0.url != nil }
-            .flatMap { URL(string: $0.url ?? "") }
+        let preferred = files?.first { $0.label == "240p" }?.url
+            ?? files?.first { $0.url != nil }?.url
+        return preferred.flatMap { URL(string: $0) }
     }
 
     var publishedDate: Date? {

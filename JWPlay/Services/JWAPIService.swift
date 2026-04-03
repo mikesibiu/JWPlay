@@ -42,11 +42,14 @@ actor JWAPIService {
         }
 
         // CBS URLs — lesson numbers from WOL, then look up in LFB catalog
+        // Match by leading digit(s) in title ("68. Title") — mirrors Android LfbLessonCatalog
         var cbsURLs: [URL] = []
         var cbsTitle = "Congregation Bible Study"
         if let lessonNums = wol?.cbsLessons, !lessonNums.isEmpty, let lfb = lfbAll {
             cbsURLs = lessonNums.compactMap { num in
-                lfb.first { $0.label == "Lesson \(num)" }?.url
+                lfb.first { track in
+                    lfbLeadingNumber(track) == num
+                }?.url
             }
             if let first = lessonNums.first, let last = lessonNums.last {
                 cbsTitle = first == last ? "CBS Lesson \(first)" : "CBS Lessons \(first)–\(last)"
@@ -89,7 +92,8 @@ actor JWAPIService {
     func ensureSongs() async -> [PubMediaTrack]? {
         if let cached = songsTracks { return cached }
         if let disk = CacheService.shared.cachedSongs() { songsTracks = disk; return disk }
-        guard let tracks = try? await fetchTracks(pub: "sjjm", issue: nil) else { return nil }
+        // sjjc = vocal/congregation version (matches Android Auto); sjjm = male vocals only
+        guard let tracks = try? await fetchTracks(pub: "sjjc", issue: nil) else { return nil }
         songsTracks = tracks
         CacheService.shared.cacheSongs(tracks)
         return tracks
@@ -165,6 +169,17 @@ actor JWAPIService {
         let (data, _) = try await session.data(from: url)
         let response = try JSONDecoder().decode(PubMediaResponse.self, from: data)
         return response.files.E?.MP3 ?? []
+    }
+
+    /// Extracts the leading lesson number from an LFB track title, e.g. "68 Title" → 68.
+    /// Mirrors Android's LfbLessonCatalog: Regex("^(\\d{1,3})").find(title)
+    private func lfbLeadingNumber(_ track: PubMediaTrack) -> Int? {
+        let text = track.title ?? track.label ?? ""
+        var digits = ""
+        for ch in text.prefix(4) {
+            if ch.isNumber { digits.append(ch) } else { break }
+        }
+        return digits.isEmpty ? nil : Int(digits)
     }
 
     private func fetchMediatorCategory(_ category: String, isGB: Bool) async -> [BroadcastingTrack] {

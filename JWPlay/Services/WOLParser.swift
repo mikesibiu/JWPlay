@@ -3,21 +3,30 @@ import Foundation
 /// Parses HTML from wol.jw.org MWB weekly pages to extract:
 ///  - CBS lesson numbers
 ///  - Bible reading chapter range
+///
+/// Parsing strategy mirrors Android MwbScheduleProvider exactly:
+///  - CBS: anchor search from "Congregation Bible Study" marker (500 char window)
+///  - Header: search only first 3000 chars to avoid false positives
 struct WOLParser {
 
     // MARK: - CBS lesson numbers
 
     /// Returns lesson numbers from text like "lfb lessons 68-69" or
-    /// "lfb intro to section 11 and lessons 68-69"
+    /// "lfb intro to section 11 and lessons 68-69".
+    /// Searches within 500 chars of "Congregation Bible Study" — mirrors Android.
     static func parseCBSLessons(from html: String) -> [Int] {
         let text = stripHTML(html)
-        // Match "lfb" followed eventually by "lesson(s) N" with optional "-M"
-        guard let match = text.range(of: #"(?i)lfb[^.]*?lessons?\s+(\d+)(?:\s*[-–]\s*(\d+))?"#,
-                                      options: .regularExpression) else {
-            return []
-        }
-        let snippet = String(text[match])
-        // Extract all digit sequences after "lesson"
+
+        // Anchor search from "Congregation Bible Study" marker (Android approach)
+        guard let markerRange = text.range(of: "Congregation Bible Study") else { return [] }
+        let excerptStart = markerRange.lowerBound
+        let excerptEnd   = text.index(excerptStart, offsetBy: 500, limitedBy: text.endIndex) ?? text.endIndex
+        let excerpt      = String(text[excerptStart..<excerptEnd])
+
+        guard let match = excerpt.range(of: #"(?i)lessons?\s+(\d+)(?:[-–](\d+))?"#,
+                                         options: .regularExpression) else { return [] }
+        let snippet = String(excerpt[match])
+
         guard let lessonRange = snippet.range(of: #"(?i)lessons?\s+"#, options: .regularExpression) else {
             return []
         }
@@ -43,17 +52,13 @@ struct WOLParser {
         let endChapter: Int
     }
 
-    /// Extracts Bible chapter range from MWB page header like "MARCH 9-15 ISAIAH 43-44"
-    /// Falls back to Bible Reading line "Bible Reading (4 min.) Isa 44:9-20"
+    /// Extracts Bible chapter range from MWB page.
+    /// Strategy 1: header "ISAIAH 43-44" (first 3000 chars only — Android approach)
+    /// Strategy 2: Bible Reading line "Isa 44:9-20"
     static func parseBibleRange(from html: String) -> BibleRange? {
         let text = stripHTML(html)
-
-        // Strategy 1: find "BOOKNAME digits-digits" in the page header area
         if let range = parseFromHeader(text) { return range }
-
-        // Strategy 2: parse "Bible Reading ... Abbrev chapter:verse"
         if let range = parseFromBibleReadingLine(text) { return range }
-
         return nil
     }
 
@@ -65,63 +70,57 @@ struct WOLParser {
             .replacingOccurrences(of: "&nbsp;", with: " ")
             .replacingOccurrences(of: "&amp;", with: "&")
             .replacingOccurrences(of: "&#160;", with: " ")
-        // Collapse whitespace
         while result.contains("  ") {
             result = result.replacingOccurrences(of: "  ", with: " ")
         }
         return result
     }
 
+    /// Search first 3000 chars for "WORD(S) digits-digits", skip non-Bible-book words.
+    /// Mirrors Android: `val searchArea = html.take(3000)` + `BibleBooks.findByName`.
     private static func parseFromHeader(_ text: String) -> BibleRange? {
-        // Find all occurrences of WORD(S) digits-digits
-        // Then check if the word part is a Bible book name
-        let pattern = #"([A-Z][A-Z]+(?:\s+[A-Z][A-Z]+)*)\s+(\d+)\s*[-–]\s*(\d+)"#
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return nil }
-        let nsText = text as NSString
-        let matches = regex.matches(in: text, range: NSRange(text.startIndex..., in: text))
+        let searchArea = String(text.prefix(3000))
+        let pattern = #"([A-Za-z]+(?:\s+[A-Za-z]+)?)\s+(\d+)[–\-](\d+)"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { return nil }
+        let matches = regex.matches(in: searchArea, range: NSRange(searchArea.startIndex..., in: searchArea))
 
         for match in matches {
-            guard match.numberOfRanges == 4 else { continue }
-            let wordRange = Range(match.range(at: 1), in: text)
-            let startRange = Range(match.range(at: 2), in: text)
-            let endRange   = Range(match.range(at: 3), in: text)
+            guard match.numberOfRanges == 4,
+                  let wordRange  = Range(match.range(at: 1), in: searchArea),
+                  let startRange = Range(match.range(at: 2), in: searchArea),
+                  let endRange   = Range(match.range(at: 3), in: searchArea) else { continue }
 
-            guard let wr = wordRange, let sr = startRange, let er = endRange else { continue }
-            let word  = String(text[wr]).uppercased()
-            let start = Int(text[sr]) ?? 0
-            let end   = Int(text[er]) ?? 0
+            let word  = String(searchArea[wordRange])
+            let start = Int(searchArea[startRange]) ?? 0
+            let endCh = Int(searchArea[endRange])   ?? 0
 
-            // Skip date ranges (months) — check if word is a known Bible book name
-            if let book = BibleBook.book(forUpperCaseName: word), start > 0, end > 0 {
-                return BibleRange(booknum: book.id, startChapter: start, endChapter: end)
-            }
+            guard let book = BibleBook.book(forUpperCaseName: word.uppercased()),
+                  start > 0, endCh > start else { continue }
 
-            // Handle multi-word names by scanning all books
-            // (NSString range already handles multi-word via the pattern above)
-            _ = nsText // suppress unused warning
+            return BibleRange(booknum: book.id, startChapter: start, endChapter: endCh)
         }
         return nil
     }
 
+    /// Fallback: "Bible Reading (4 min.) Isa 44:9-20" → end chapter 44.
+    /// Mirrors Android's parseBibleReadingEndChapter: searches 300 chars from marker.
     private static func parseFromBibleReadingLine(_ text: String) -> BibleRange? {
-        // Match "Bible Reading" line: "Bible Reading (4 min.) Isa 44:9-20"
-        let pattern = #"Bible Reading[^\n]*?([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+(\d+):\d+"#
+        guard let markerRange = text.range(of: "Bible Reading") else { return nil }
+        let excerptEnd = text.index(markerRange.lowerBound, offsetBy: 300, limitedBy: text.endIndex) ?? text.endIndex
+        let excerpt    = String(text[markerRange.lowerBound..<excerptEnd])
+
+        let pattern = #"([A-Za-z]+)\s+(\d+):\d+"#
         guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
-              match.numberOfRanges == 3 else { return nil }
+              let match = regex.firstMatch(in: excerpt, range: NSRange(excerpt.startIndex..., in: excerpt)),
+              match.numberOfRanges == 3,
+              let abbrRange = Range(match.range(at: 1), in: excerpt),
+              let chRange   = Range(match.range(at: 2), in: excerpt) else { return nil }
 
-        guard let abbrRange = Range(match.range(at: 1), in: text),
-              let chRange   = Range(match.range(at: 2), in: text) else { return nil }
+        let abbr    = String(excerpt[abbrRange])
+        guard let chapter = Int(excerpt[chRange]),
+              let book = BibleBook.all.first(where: { $0.abbreviation == abbr }) else { return nil }
 
-        let abbr = String(text[abbrRange])
-        guard let chapter = Int(text[chRange]) else { return nil }
-
-        // Match abbreviation to book
-        if let book = BibleBook.all.first(where: { $0.abbreviation == abbr }) {
-            // From fallback we only know end chapter; assume start = end - 1 for typical 2-chapter reading
-            let startChapter = max(1, chapter - 1)
-            return BibleRange(booknum: book.id, startChapter: startChapter, endChapter: chapter)
-        }
-        return nil
+        // Fallback only gives us end chapter; infer start = end - 1 (typical 2-chapter weekly reading)
+        return BibleRange(booknum: book.id, startChapter: max(1, chapter - 1), endChapter: chapter)
     }
 }

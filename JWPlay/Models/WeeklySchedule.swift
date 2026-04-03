@@ -113,7 +113,9 @@ struct WeekDate {
     }
 
     // Does a Watchtower track title match this week? e.g. "(March 9-15)"
+    // The [^0-9] guard prevents "March 9" from matching "March 19" — mirrors Android regex
     func watchtowerTrackMatches(title: String) -> Bool {
-        title.contains("(\(monthName) \(dayOfMonth)")
+        let pattern = "(\(monthName) \(dayOfMonth)[^0-9]"
+        return title.range(of: pattern, options: .regularExpression) != nil
     }
 }
