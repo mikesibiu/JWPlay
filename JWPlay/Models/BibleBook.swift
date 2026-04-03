@@ -13,7 +13,7 @@ struct BibleBook: Identifiable, Hashable {
 
     // Group size from lessons learned: 10 chapters per folder; skip grouping if <= 10
     static let chapterGroupSize = 10
-    var needsChapterGroups: Bool { chapterCount > chapterGroupSize }
+    var needsChapterGroups: Bool { chapterCount > BibleBook.chapterGroupSize }
 
     // MARK: - Browse tree ID helpers
     var browsableID: String { "bible-\(testament == .hebrew ? "hebrew" : "greek")-\(id)" }
