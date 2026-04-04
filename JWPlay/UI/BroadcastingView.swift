@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BroadcastingView: View {
     @EnvironmentObject private var player: AudioPlayer
+    @EnvironmentObject private var langSettings: LanguageSettings
     @State private var tracks: [BroadcastingTrack] = []
     @State private var loading = true
     @State private var failed = false
@@ -54,13 +55,17 @@ struct BroadcastingView: View {
             }
             .navigationTitle("JW Broadcasting")
             .task { await load() }
+            .onChange(of: langSettings.language) { _ in
+                tracks = []
+                Task { await load() }
+            }
         }
     }
 
     private func load() async {
         loading = true
         failed = false
-        tracks = await JWAPIService.shared.fetchBroadcasting()
+        tracks = await JWAPIService.shared.fetchBroadcasting(language: langSettings.language)
         if tracks.isEmpty { failed = true }
         loading = false
     }

@@ -102,9 +102,9 @@ actor JWAPIService {
         return tracks
     }
 
-    func fetchBroadcasting() async -> [BroadcastingTrack] {
-        async let monthly   = fetchMediatorCategory("StudioMonthlyPrograms", isGB: false)
-        async let gbUpdates = fetchMediatorCategory("StudioNewsReports",     isGB: true)
+    func fetchBroadcasting(language: AppLanguage) async -> [BroadcastingTrack] {
+        async let monthly   = fetchMediatorCategory("StudioMonthlyPrograms", isGB: false, language: language)
+        async let gbUpdates = fetchMediatorCategory("StudioNewsReports",     isGB: true,  language: language)
         let (mon, gbu) = await (monthly, gbUpdates)
         return Array((gbu + mon).prefix(30))
     }
@@ -173,8 +173,8 @@ actor JWAPIService {
         return digits.isEmpty ? nil : Int(digits)
     }
 
-    private func fetchMediatorCategory(_ category: String, isGB: Bool) async -> [BroadcastingTrack] {
-        let urlString = "\(mediatorBase)/categories/E/\(category)?detailed=1"
+    private func fetchMediatorCategory(_ category: String, isGB: Bool, language: AppLanguage) async -> [BroadcastingTrack] {
+        let urlString = "\(mediatorBase)/categories/\(language.rawValue)/\(category)?detailed=1"
         guard let url = URL(string: urlString),
               let (data, _) = try? await session.data(from: url) else { return [] }
         guard let response = try? JSONDecoder().decode(MediatorCategoryResponse.self, from: data) else { return [] }
