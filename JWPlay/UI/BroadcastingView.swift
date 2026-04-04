@@ -8,16 +8,17 @@ struct BroadcastingView: View {
     @State private var failed = false
 
     var body: some View {
+        let lang = langSettings.language
         NavigationStack {
             Group {
                 if loading {
-                    ProgressView("Loading broadcasts…")
+                    ProgressView(lang.loadingBroadcasts)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if failed || tracks.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "tv.slash")
                             .font(.largeTitle).foregroundStyle(.secondary)
-                        Text("JW Broadcasting content could not be loaded.")
+                        Text(lang.broadcastingUnavailable)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                     }
@@ -53,7 +54,7 @@ struct BroadcastingView: View {
                     .listStyle(.plain)
                 }
             }
-            .navigationTitle("JW Broadcasting")
+            .navigationTitle(lang.broadcastingTitle)
             .task { await load() }
             .onChange(of: langSettings.language) { _ in
                 tracks = []
