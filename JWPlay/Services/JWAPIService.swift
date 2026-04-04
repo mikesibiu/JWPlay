@@ -18,15 +18,17 @@ actor JWAPIService {
 
     func buildWeeklySchedule(for weekDate: WeekDate, language: AppLanguage) async -> WeeklySchedule {
         // Always fetch English MWB for the docid — needed for WOL (CBS + Bible Reading).
-        // Romanian MWB audio API returns 404, so mwbURL will be nil for Romanian.
+        // French MWB has audio, so we also fetch its URL in parallel.
+        // Romanian MWB audio API returns 404 — mwbURL stays nil for Romanian.
         let mwb = await fetchMWBTrack(weekDate: weekDate)
 
-        async let wolResult = fetchWOLSchedule(docid: mwb?.docid)
-        async let wtResult  = fetchWatchtowerTrack(weekDate: weekDate, language: language)
-        async let nwtResult = ensureNWT(language: language)
-        async let lfbResult = ensureLFB(language: language)
+        async let wolResult    = fetchWOLSchedule(docid: mwb?.docid)
+        async let wtResult     = fetchWatchtowerTrack(weekDate: weekDate, language: language)
+        async let nwtResult    = ensureNWT(language: language)
+        async let lfbResult    = ensureLFB(language: language)
+        async let frenchMWBURL = fetchFrenchMWBURL(weekDate: weekDate, language: language)
 
-        let (wol, wt, nwtAll, lfbAll) = await (wolResult, wtResult, nwtResult, lfbResult)
+        let (wol, wt, nwtAll, lfbAll, frMWBURL) = await (wolResult, wtResult, nwtResult, lfbResult, frenchMWBURL)
 
         // Bible reading URLs (in selected language)
         var bibleURLs: [URL] = []
@@ -56,10 +58,17 @@ actor JWAPIService {
             }
         }
 
+        let mwbURL: URL?
+        switch language {
+        case .english:  mwbURL = mwb?.url
+        case .french:   mwbURL = frMWBURL
+        case .romanian: mwbURL = nil
+        }
+
         return WeeklySchedule(
             weekKey:           weekDate.isoKey,
             weekLabel:         weekDate.displayLabel,
-            mwbURL:            language == .english ? mwb?.url : nil,  // no Romanian MWB audio
+            mwbURL:            mwbURL,
             mwbTitle:          mwb?.title ?? "Meeting Workbook",
             watchtowerURL:     wt?.url,
             watchtowerTitle:   wt?.title ?? "Watchtower Study",
@@ -116,10 +125,20 @@ actor JWAPIService {
     // MARK: - Private fetches
 
     private func fetchMWBTrack(weekDate: WeekDate) async -> PubMediaTrack? {
-        // Always fetch English MWB — needed for docid even for Romanian
+        // Always fetch English MWB — needed for docid even for non-English languages
         guard let tracks = try? await fetchTracks(pub: "mwb", issue: weekDate.mwbIssue, language: .english) else { return nil }
         return tracks.sorted { $0.track < $1.track }
                      .first { weekDate.mwbTrackMatches(title: $0.title) }
+    }
+
+    // Returns the French MWB audio URL for the given week, or nil if language != .french
+    // French MWB titles are day-first: "9-15 mars" — uses mwbFrenchTrackMatches
+    private func fetchFrenchMWBURL(weekDate: WeekDate, language: AppLanguage) async -> URL? {
+        guard language == .french else { return nil }
+        guard let tracks = try? await fetchTracks(pub: "mwb", issue: weekDate.mwbIssue, language: .french) else { return nil }
+        return tracks.sorted { $0.track < $1.track }
+                     .first { weekDate.mwbFrenchTrackMatches(title: $0.title) }?
+                     .url
     }
 
     private struct WOLSchedule {

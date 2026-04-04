@@ -2,53 +2,209 @@ import Foundation
 
 enum AppLanguage: String, CaseIterable {
     case english  = "E"
+    case french   = "F"
     case romanian = "M"
 
     var displayName: String {
         switch self {
         case .english:  return "EN"
+        case .french:   return "FR"
         case .romanian: return "RO"
         }
     }
 
-    // Romanian month names (lowercase, as they appear in jw.org API titles)
+    // Month names (lowercase) as they appear in jw.org API titles
     static let romanianMonthNames = [
         "ianuarie", "februarie", "martie", "aprilie", "mai", "iunie",
         "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"
     ]
+    static let frenchMonthNames = [
+        "janvier", "février", "mars", "avril", "mai", "juin",
+        "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+    ]
 
     // MARK: - UI Strings
 
-    var meetings: String    { self == .romanian ? "Ședințe"   : "Meetings" }
-    var bible: String       { self == .romanian ? "Biblie"    : "Bible" }
-    var songs: String       { self == .romanian ? "Cântări"   : "Songs" }
-    var broadcasting: String { self == .romanian ? "Emisiuni" : "Broadcasting" }
+    var meetings: String {
+        switch self {
+        case .english:  return "Meetings"
+        case .french:   return "Réunions"
+        case .romanian: return "Ședințe"
+        }
+    }
+    var bible: String {
+        switch self {
+        case .english:  return "Bible"
+        case .french:   return "Bible"
+        case .romanian: return "Biblie"
+        }
+    }
+    var songs: String {
+        switch self {
+        case .english:  return "Songs"
+        case .french:   return "Cantiques"
+        case .romanian: return "Cântări"
+        }
+    }
+    var broadcasting: String {
+        switch self {
+        case .english:  return "Broadcasting"
+        case .french:   return "Émissions"
+        case .romanian: return "Emisiuni"
+        }
+    }
 
-    var weeklyMeetings: String  { self == .romanian ? "Ședințe Săptămânale"    : "Weekly Meetings" }
-    var lastWeek: String        { self == .romanian ? "Săptămâna trecută"      : "Last Week" }
-    var thisWeek: String        { self == .romanian ? "Această săptămână"      : "This Week" }
-    var nextWeek: String        { self == .romanian ? "Săptămâna viitoare"     : "Next Week" }
+    var weeklyMeetings: String {
+        switch self {
+        case .english:  return "Weekly Meetings"
+        case .french:   return "Réunions de la semaine"
+        case .romanian: return "Ședințe Săptămânale"
+        }
+    }
+    var lastWeek: String {
+        switch self {
+        case .english:  return "Last Week"
+        case .french:   return "Semaine dernière"
+        case .romanian: return "Săptămâna trecută"
+        }
+    }
+    var thisWeek: String {
+        switch self {
+        case .english:  return "This Week"
+        case .french:   return "Cette semaine"
+        case .romanian: return "Această săptămână"
+        }
+    }
+    var nextWeek: String {
+        switch self {
+        case .english:  return "Next Week"
+        case .french:   return "Semaine prochaine"
+        case .romanian: return "Săptămâna viitoare"
+        }
+    }
 
-    var meetingWorkbook: String        { self == .romanian ? "Caietul pentru întruniri" : "Meeting Workbook" }
-    var watchtowerStudy: String        { self == .romanian ? "Studiul Turnul de Veghere" : "Watchtower Study" }
-    var bibleReading: String           { self == .romanian ? "Lectura Bibliei"           : "Bible Reading" }
-    var congregationBibleStudy: String { self == .romanian ? "Studiul Congregației"      : "Congregation Bible Study" }
+    var meetingWorkbook: String {
+        switch self {
+        case .english:  return "Meeting Workbook"
+        case .french:   return "Cahier des réunions"
+        case .romanian: return "Caietul pentru întruniri"
+        }
+    }
+    var watchtowerStudy: String {
+        switch self {
+        case .english:  return "Watchtower Study"
+        case .french:   return "Étude de La Tour de Garde"
+        case .romanian: return "Studiul Turnul de Veghere"
+        }
+    }
+    var bibleReading: String {
+        switch self {
+        case .english:  return "Bible Reading"
+        case .french:   return "Lecture de la Bible"
+        case .romanian: return "Lectura Bibliei"
+        }
+    }
+    var congregationBibleStudy: String {
+        switch self {
+        case .english:  return "Congregation Bible Study"
+        case .french:   return "Étude de la congrégation"
+        case .romanian: return "Studiul Congregației"
+        }
+    }
 
-    var hebrewScriptures: String { self == .romanian ? "Scripturile Ebraice"  : "Hebrew Scriptures" }
-    var greekScriptures: String  { self == .romanian ? "Scripturile Grecești" : "Greek Scriptures" }
-    var kingdomSongs: String     { self == .romanian ? "Cântări ale Împărăției" : "Kingdom Songs" }
+    var hebrewScriptures: String {
+        switch self {
+        case .english:  return "Hebrew Scriptures"
+        case .french:   return "Écritures hébraïques"
+        case .romanian: return "Scripturile Ebraice"
+        }
+    }
+    var greekScriptures: String {
+        switch self {
+        case .english:  return "Greek Scriptures"
+        case .french:   return "Écritures grecques"
+        case .romanian: return "Scripturile Grecești"
+        }
+    }
+    var kingdomSongs: String {
+        switch self {
+        case .english:  return "Kingdom Songs"
+        case .french:   return "Cantiques du Royaume"
+        case .romanian: return "Cântări ale Împărăției"
+        }
+    }
 
-    var chapter: String  { self == .romanian ? "Capitolul"  : "Chapter" }
-    var chapters: String { self == .romanian ? "Capitolele" : "Chapters" }
+    var chapter: String {
+        switch self {
+        case .english:  return "Chapter"
+        case .french:   return "Chapitre"
+        case .romanian: return "Capitolul"
+        }
+    }
+    var chapters: String {
+        switch self {
+        case .english:  return "Chapters"
+        case .french:   return "Chapitres"
+        case .romanian: return "Capitolele"
+        }
+    }
 
-    var loadingBible: String       { self == .romanian ? "Se încarcă Biblia…"      : "Loading Bible catalog…" }
-    var loadingSongs: String       { self == .romanian ? "Se încarcă cântările…"   : "Loading songs…" }
-    var loadingBroadcasts: String  { self == .romanian ? "Se încarcă emisiunile…"  : "Loading broadcasts…" }
-    var bibleDramas: String        { self == .romanian ? "Drame Biblice"           : "Bible Dramas" }
-    var loadingDramas: String      { self == .romanian ? "Se încarcă dramele…"     : "Loading dramas…" }
-    var contentUnavailable: String { self == .romanian ? "Conținut indisponibil"   : "Content not yet available" }
-    var broadcastingUnavailable: String { self == .romanian ? "Conținutul emisiunilor nu a putut fi încărcat." : "JW Broadcasting content could not be loaded." }
-    var broadcastingTitle: String  { self == .romanian ? "Emisiuni JW"             : "JW Broadcasting" }
+    var loadingBible: String {
+        switch self {
+        case .english:  return "Loading Bible catalog…"
+        case .french:   return "Chargement de la Bible…"
+        case .romanian: return "Se încarcă Biblia…"
+        }
+    }
+    var loadingSongs: String {
+        switch self {
+        case .english:  return "Loading songs…"
+        case .french:   return "Chargement des cantiques…"
+        case .romanian: return "Se încarcă cântările…"
+        }
+    }
+    var loadingBroadcasts: String {
+        switch self {
+        case .english:  return "Loading broadcasts…"
+        case .french:   return "Chargement des émissions…"
+        case .romanian: return "Se încarcă emisiunile…"
+        }
+    }
+    var loadingDramas: String {
+        switch self {
+        case .english:  return "Loading dramas…"
+        case .french:   return "Chargement des pièces…"
+        case .romanian: return "Se încarcă dramele…"
+        }
+    }
+    var contentUnavailable: String {
+        switch self {
+        case .english:  return "Content not yet available"
+        case .french:   return "Contenu indisponible"
+        case .romanian: return "Conținut indisponibil"
+        }
+    }
+    var broadcastingUnavailable: String {
+        switch self {
+        case .english:  return "JW Broadcasting content could not be loaded."
+        case .french:   return "Le contenu JW Émissions n'a pas pu être chargé."
+        case .romanian: return "Conținutul emisiunilor nu a putut fi încărcat."
+        }
+    }
+    var broadcastingTitle: String {
+        switch self {
+        case .english:  return "JW Broadcasting"
+        case .french:   return "JW Émissions"
+        case .romanian: return "Emisiuni JW"
+        }
+    }
+    var bibleDramas: String {
+        switch self {
+        case .english:  return "Bible Dramas"
+        case .french:   return "Drames bibliques"
+        case .romanian: return "Drame Biblice"
+        }
+    }
 }
 
 final class LanguageSettings: ObservableObject {
@@ -64,7 +220,9 @@ final class LanguageSettings: ObservableObject {
             language = lang
         } else {
             let preferred = Locale.preferredLanguages.first ?? ""
-            language = preferred.hasPrefix("ro") ? .romanian : .english
+            if preferred.hasPrefix("fr") { language = .french }
+            else if preferred.hasPrefix("ro") { language = .romanian }
+            else { language = .english }
         }
     }
 }

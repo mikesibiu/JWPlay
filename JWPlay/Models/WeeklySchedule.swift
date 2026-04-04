@@ -94,10 +94,14 @@ struct WeekDate {
         return fmt.string(from: monday)
     }
 
-    // Romanian month name for Monday's month
+    // Localized month name for Monday's month
     var romanianMonthName: String {
         let month = Calendar(identifier: .gregorian).component(.month, from: monday)
         return AppLanguage.romanianMonthNames[month - 1]
+    }
+    var frenchMonthName: String {
+        let month = Calendar(identifier: .gregorian).component(.month, from: monday)
+        return AppLanguage.frenchMonthNames[month - 1]
     }
 
     // Display label "March 30 – April 5"
@@ -119,19 +123,30 @@ struct WeekDate {
         }
     }
 
-    // Does a MWB track title match this week?
-    // MWB track titles use Monday's date (e.g. "April 6-12" for week of Monday April 6)
+    // Does an English MWB track title match this week?
+    // English format: "April 6-12" → hasPrefix("April 6")
     func mwbTrackMatches(title: String) -> Bool {
         title.hasPrefix("\(monthName) \(dayOfMonth)")
     }
 
+    // Does a French MWB track title match this week?
+    // French format: "9-15 mars" → starts with day number then non-digit
+    func mwbFrenchTrackMatches(title: String) -> Bool {
+        let pattern = "^\(dayOfMonth)[^0-9]"
+        return title.range(of: pattern, options: .regularExpression) != nil
+    }
+
     // Does a Watchtower track title match this week?
-    // English: "...Speak the Truth Graciously (March 30 - April 5)" → \\(March 30[^0-9]
-    // Romanian: "...Cum ne putem... (6-12 aprilie)" → \\(6[^0-9].*aprilie
+    // English:  "...Graciously (March 30 - April 5)"  → \(March 30[^0-9]
+    // French:   "...vertus (2-8 mars)"                → \(2[^0-9].*mars
+    // Romanian: "...putem... (6-12 aprilie)"          → \(6[^0-9].*aprilie
     func watchtowerTrackMatches(title: String, language: AppLanguage) -> Bool {
         switch language {
         case .english:
             let pattern = "\\(\(monthName) \(dayOfMonth)[^0-9]"
+            return title.range(of: pattern, options: .regularExpression) != nil
+        case .french:
+            let pattern = "\\(\(dayOfMonth)[^0-9].*\(frenchMonthName)"
             return title.range(of: pattern, options: .regularExpression) != nil
         case .romanian:
             let pattern = "\\(\(dayOfMonth)[^0-9].*\(romanianMonthName)"

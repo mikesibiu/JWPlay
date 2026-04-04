@@ -40,12 +40,14 @@ struct BibleView: View {
         testament == .hebrew ? BibleBook.hebrewScriptures : BibleBook.greekScriptures
     }
 
-    // Extract Romanian book name from NWT track title e.g. "Geneza - Capitolul 1" → "Geneza"
+    // Extract localized book name from NWT track title
+    // e.g. "Geneza - Capitolul 1" → "Geneza"  (RO)
+    //      "Genèse - Chapitre 1"  → "Genèse"  (FR)
     private func displayName(for book: BibleBook) -> String {
-        guard langSettings.language == .romanian else { return book.name }
+        guard langSettings.language == .romanian || langSettings.language == .french else { return book.name }
         if let track = nwtTracks.first(where: { $0.booknum == book.id }),
-           let roName = track.title.components(separatedBy: " - ").first {
-            return roName
+           let localName = track.title.components(separatedBy: " - ").first {
+            return localName
         }
         return book.name
     }
@@ -86,12 +88,12 @@ struct BookChaptersView: View {
     }
     private var bookURLs: [URL] { bookTracks.compactMap { $0.url } }
 
-    // Romanian book name from first track title
+    // Localized book name from first track title (FR/RO use " - " separator)
     private var displayName: String {
-        guard langSettings.language == .romanian else { return book.name }
+        guard langSettings.language == .romanian || langSettings.language == .french else { return book.name }
         if let track = bookTracks.first,
-           let roName = track.title.components(separatedBy: " - ").first {
-            return roName
+           let localName = track.title.components(separatedBy: " - ").first {
+            return localName
         }
         return book.name
     }
