@@ -19,6 +19,7 @@ extension WeeklySchedule {
     var hasWatchtower: Bool { watchtowerURL != nil }
     var hasBibleReading: Bool { !bibleReadingURLs.isEmpty }
     var hasCBS: Bool { !cbsURLs.isEmpty }
+    var hasAnyContent: Bool { hasMWB || hasWatchtower || hasBibleReading || hasCBS }
 }
 
 // MARK: - Week offset helpers
@@ -42,7 +43,7 @@ struct WeekDate {
 
     init(offset: WeekOffset = .current, from base: Date = Date()) {
         var cal = Calendar(identifier: .gregorian)
-        cal.firstWeekday = 2  // Monday
+        cal.firstWeekday = 2  // Monday-first (ISO)
         let thisMonday = cal.date(
             from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: base)
         ) ?? base
@@ -51,7 +52,9 @@ struct WeekDate {
 
     // ISO week key e.g. "2026-W14"
     var isoKey: String {
-        let cal = Calendar(identifier: .gregorian)
+        var cal = Calendar(identifier: .gregorian)
+        cal.firstWeekday = 2          // must match init's calendar
+        cal.minimumDaysInFirstWeek = 4 // ISO 8601 semantics
         let year = cal.component(.yearForWeekOfYear, from: monday)
         let week = cal.component(.weekOfYear, from: monday)
         return String(format: "%04d-W%02d", year, week)
@@ -66,22 +69,19 @@ struct WeekDate {
         return String(format: "%04d%02d", year, issueMonth)
     }
 
-    // Watchtower issues to try: offset -2 first, then -3
-    // Uses DateComponents arithmetic to avoid negative-modulo bugs in Jan/Feb
+    // Watchtower issues to try: current month -1, -2, -3
+    // Uses byAdding to handle month underflow (Jan, Feb) correctly
     var watchtowerIssuesToTry: [String] {
-        [2, 3].map { offset in
-            var cal = Calendar(identifier: .gregorian)
-            cal.locale = Locale(identifier: "en_US")
-            var comps = cal.dateComponents([.year, .month], from: monday)
-            comps.month! -= offset
-            let adjusted = cal.date(from: comps) ?? monday
+        let cal = Calendar(identifier: .gregorian)
+        return [1, 2, 3].map { offset in
+            let adjusted = cal.date(byAdding: .month, value: -offset, to: monday) ?? monday
             let year  = cal.component(.year,  from: adjusted)
             let month = cal.component(.month, from: adjusted)
             return String(format: "%04d%02d", year, month)
         }
     }
 
-    // Day-of-month and month name for matching MWB track title ("March 9-15")
+    // Monday's day-of-month and month name
     var dayOfMonth: Int {
         Calendar(identifier: .gregorian).component(.day, from: monday)
     }
@@ -112,15 +112,17 @@ struct WeekDate {
         }
     }
 
-    // Does a MWB track title match this week? e.g. "March 9-15"
+    // Does a MWB track title match this week?
+    // MWB track titles start on the Monday of the week (e.g. "April 6-12")
     func mwbTrackMatches(title: String) -> Bool {
         title.hasPrefix("\(monthName) \(dayOfMonth)")
     }
 
-    // Does a Watchtower track title match this week? e.g. "(March 9-15)"
-    // The [^0-9] guard prevents "March 9" from matching "March 19" — mirrors Android regex
+    // Does a Watchtower track title match this week? e.g. "(March 30 - April 5)"
+    // \\( matches the literal '(' in titles like "...Speak the Truth Graciously (March 30 - April 5)"
+    // [^0-9] prevents "March 9" from matching "March 19"
     func watchtowerTrackMatches(title: String) -> Bool {
-        let pattern = "(\(monthName) \(dayOfMonth)[^0-9]"
+        let pattern = "\\(\(monthName) \(dayOfMonth)[^0-9]"
         return title.range(of: pattern, options: .regularExpression) != nil
     }
 }

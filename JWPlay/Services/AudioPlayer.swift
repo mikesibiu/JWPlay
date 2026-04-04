@@ -20,6 +20,7 @@ final class AudioPlayer: ObservableObject {
         // Audio session is set up once here; AppDelegate does NOT duplicate this
         setupAudioSession()
         setupRemoteCommands()
+        setupInterruptionHandler()
     }
 
     // MARK: - Playback control
@@ -54,9 +55,9 @@ final class AudioPlayer: ObservableObject {
     }
 
     func skipForward() {
-        // advanceToNextItem fires AVPlayerItemDidPlayToEndTime, which calls playerItemDidEnd.
-        // playerItemDidEnd owns the currentIndex increment — don't duplicate it here.
-        player?.advanceToNextItem()
+        guard let player, currentIndex + 1 < playerItems.count else { return }
+        currentIndex += 1
+        player.advanceToNextItem()
         updateNowPlaying()
     }
 
@@ -89,6 +90,34 @@ final class AudioPlayer: ObservableObject {
         player?.play()
         observeItemEnd()
         updateNowPlaying()
+    }
+
+    private func setupInterruptionHandler() {
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification,
+            object: AVAudioSession.sharedInstance(),
+            queue: .main
+        ) { [weak self] note in
+            guard let userInfo = note.userInfo,
+                  let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if type == .began {
+                    self.player?.pause()
+                    self.isPlaying = false
+                    self.updateNowPlaying()
+                } else if type == .ended {
+                    if let optValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt,
+                       AVAudioSession.InterruptionOptions(rawValue: optValue).contains(.shouldResume) {
+                        try? AVAudioSession.sharedInstance().setActive(true)
+                        self.player?.play()
+                        self.isPlaying = true
+                        self.updateNowPlaying()
+                    }
+                }
+            }
+        }
     }
 
     private func setupAudioSession() {

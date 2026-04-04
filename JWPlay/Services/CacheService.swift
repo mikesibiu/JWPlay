@@ -13,7 +13,7 @@ final class CacheService {
         static let cacheVersion = "cache_version"
     }
 
-    private let currentVersion = 1
+    private let currentVersion = 4
 
     // Call at app launch — clears all content if version bumped
     func clearIfVersionChanged() {

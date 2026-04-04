@@ -11,6 +11,7 @@
 		234CE5C3B1C446D3D5963C90 /* BibleBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = C874F21BA209C84278BD073F /* BibleBook.swift */; };
 		29E7B87856EE2C9952F464FC /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B203DDD1A7EFC467BFCE8E3 /* MediaPlayer.framework */; };
 		2D37B42C47FF8106FC2B2E72 /* WOLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5359917CB8730DCCDFA37382 /* WOLParser.swift */; };
+		2F5BD6D432E07384386C4630 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4771917648923343D381FD05 /* Assets.xcassets */; };
 		3BB57586B0DC839BBDB6848E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B760C3AB5E14AEA6839655 /* AppDelegate.swift */; };
 		4A5024607EEEC49A49A2AD5B /* WeeklySchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F251F922ACFEEF9D9612B04 /* WeeklySchedule.swift */; };
 		4F9674A4DB1B700F66CCB351 /* JWAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6A220D568E46ABA4F7D84A /* JWAPIService.swift */; };
@@ -36,6 +37,7 @@
 		1B203DDD1A7EFC467BFCE8E3 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		38AB10578DB5519E24F1131A /* MeetingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsView.swift; sourceTree = "<group>"; };
 		3B15AFF5979E81B30FC50094 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		4771917648923343D381FD05 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5143AA4ADD6784301468E3C0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5359917CB8730DCCDFA37382 /* WOLParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WOLParser.swift; sourceTree = "<group>"; };
 		5ACF58955DDC3240F4F01786 /* CarPlay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CarPlay.framework; path = System/Library/Frameworks/CarPlay.framework; sourceTree = SDKROOT; };
@@ -50,7 +52,7 @@
 		C874F21BA209C84278BD073F /* BibleBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleBook.swift; sourceTree = "<group>"; };
 		D484BE37A5FA53FBCC8B149B /* PubMediaResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubMediaResponse.swift; sourceTree = "<group>"; };
 		E1B760C3AB5E14AEA6839655 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		F13D067F367968EA07797129 /* JWPlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JWPlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F13D067F367968EA07797129 /* JWPlay.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = JWPlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3D49D4AD18A7E2D1B4DAE93 /* JWPlay.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JWPlay.entitlements; sourceTree = "<group>"; };
 		FC6A220D568E46ABA4F7D84A /* JWAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWAPIService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -72,6 +74,7 @@
 		238272B2D0FFED5869E9EEBA /* JWPlay */ = {
 			isa = PBXGroup;
 			children = (
+				4771917648923343D381FD05 /* Assets.xcassets */,
 				9A14187B73932408DF704975 /* Info.plist */,
 				F3D49D4AD18A7E2D1B4DAE93 /* JWPlay.entitlements */,
 				EF29068D0CF3C6BAE39B43F5 /* App */,
@@ -170,6 +173,7 @@
 			buildConfigurationList = 26FF22770F062DD182416E97 /* Build configuration list for PBXNativeTarget "JWPlay" */;
 			buildPhases = (
 				68253A9BE02281C1C0FAF419 /* Sources */,
+				84B7575DB390110E2670C331 /* Resources */,
 				45125447E5DAFAE75E02F721 /* Frameworks */,
 			);
 			buildRules = (
@@ -193,6 +197,7 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					3E887D86880C2B30EA7EB8A3 = {
+						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -215,6 +220,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		84B7575DB390110E2670C331 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2F5BD6D432E07384386C4630 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		68253A9BE02281C1C0FAF419 /* Sources */ = {
@@ -313,16 +329,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = JWPlay/JWPlay.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = UG3A77FKB3;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = JWPlay/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.farace.JWPlay;
+				PRODUCT_DISPLAY_NAME = "JW Auto";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -332,16 +350,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = JWPlay/JWPlay.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = UG3A77FKB3;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = JWPlay/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.farace.JWPlay;
+				PRODUCT_DISPLAY_NAME = "JW Auto";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

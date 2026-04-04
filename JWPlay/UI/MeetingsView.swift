@@ -46,7 +46,9 @@ struct MeetingsView: View {
             return
         }
         let schedule = await JWAPIService.shared.buildWeeklySchedule(for: weekDate)
-        CacheService.shared.cache(schedule: schedule, for: weekDate.isoKey)
+        if schedule.hasAnyContent {
+            CacheService.shared.cache(schedule: schedule, for: weekDate.isoKey)
+        }
         schedules[offset] = schedule
     }
 }
@@ -126,8 +128,8 @@ struct ContentRow: View {
                     .background(color, in: RoundedRectangle(cornerRadius: 8))
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.body).foregroundStyle(.primary).lineLimit(2)
-                    Text(subtitle).font(.caption).foregroundStyle(.secondary)
+                    Text(subtitle).font(.subheadline).bold().foregroundStyle(.primary)
+                    Text(title).font(.caption).foregroundStyle(.secondary).lineLimit(2)
                 }
                 Spacer()
                 Image(systemName: "play.circle.fill")

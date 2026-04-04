@@ -16,8 +16,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
 
     func templateApplicationScene(
         _ templateApplicationScene: CPTemplateApplicationScene,
-        didDisconnect interfaceController: CPInterfaceController,
-        from window: CPWindow
+        didDisconnectInterfaceController interfaceController: CPInterfaceController
     ) {
         templateProvider = nil
     }

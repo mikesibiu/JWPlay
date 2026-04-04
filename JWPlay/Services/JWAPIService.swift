@@ -143,7 +143,8 @@ actor JWAPIService {
     private func fetchWatchtowerTrack(weekDate: WeekDate) async -> PubMediaTrack? {
         for issue in weekDate.watchtowerIssuesToTry {
             guard let tracks = try? await fetchTracks(pub: "w", issue: issue) else { continue }
-            if let match = tracks.first(where: { weekDate.watchtowerTrackMatches(title: $0.title) }) {
+            if let match = tracks.sorted(by: { $0.track < $1.track })
+                                 .first(where: { weekDate.watchtowerTrackMatches(title: $0.title) }) {
                 return match
             }
         }
