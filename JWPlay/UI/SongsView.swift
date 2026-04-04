@@ -5,6 +5,7 @@ struct SongsView: View {
     @EnvironmentObject private var langSettings: LanguageSettings
     @State private var songs: [PubMediaTrack] = []
     @State private var loading = true
+    @State private var navPath = NavigationPath()
 
     private let groupSize = 20
 
@@ -15,10 +16,11 @@ struct SongsView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        let lang = langSettings.language
+        NavigationStack(path: $navPath) {
             Group {
                 if loading {
-                    ProgressView("Loading songs…")
+                    ProgressView(lang.loadingSongs)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List {
@@ -26,7 +28,7 @@ struct SongsView: View {
                             let group = groups[idx]
                             let first = group.first?.track ?? 0
                             let last  = group.last?.track  ?? 0
-                            let label = String(format: "Songs %03d–%03d", first, last)
+                            let label = String(format: "\(lang.songs) %03d–%03d", first, last)
                             NavigationLink(label) {
                                 SongGroupView(songs: group)
                                     .navigationTitle(label)
@@ -36,9 +38,10 @@ struct SongsView: View {
                     .listStyle(.plain)
                 }
             }
-            .navigationTitle("Kingdom Songs")
+            .navigationTitle(lang.kingdomSongs)
             .task { await loadSongs() }
             .onChange(of: langSettings.language) { _ in
+                navPath = NavigationPath()
                 songs = []
                 loading = true
                 Task { await loadSongs() }
@@ -66,7 +69,7 @@ struct SongGroupView: View {
                     guard let url = song.url else { return }
                     player.play(urls: [url],
                                 title: song.title,
-                                subtitle: String(format: "Kingdom Song %03d", song.track),
+                                subtitle: String(format: "%03d", song.track),
                                 artwork: "music.note")
                 } label: {
                     HStack {

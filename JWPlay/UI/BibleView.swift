@@ -5,27 +5,30 @@ struct BibleView: View {
     @State private var nwtTracks: [PubMediaTrack] = []
     @State private var loading = true
     @State private var testament: BibleBook.Testament = .hebrew
+    @State private var navPath = NavigationPath()
 
     var body: some View {
-        NavigationStack {
+        let lang = langSettings.language
+        NavigationStack(path: $navPath) {
             VStack(spacing: 0) {
                 Picker("Testament", selection: $testament) {
-                    Text("Hebrew Scriptures").tag(BibleBook.Testament.hebrew)
-                    Text("Greek Scriptures").tag(BibleBook.Testament.greek)
+                    Text(lang.hebrewScriptures).tag(BibleBook.Testament.hebrew)
+                    Text(lang.greekScriptures).tag(BibleBook.Testament.greek)
                 }
                 .pickerStyle(.segmented)
                 .padding()
 
                 if loading {
-                    ProgressView("Loading Bible catalog…")
+                    ProgressView(lang.loadingBible)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     bookList
                 }
             }
-            .navigationTitle("Bible")
+            .navigationTitle(lang.bible)
             .task { await loadNWT() }
             .onChange(of: langSettings.language) { _ in
+                navPath = NavigationPath()
                 nwtTracks = []
                 loading = true
                 Task { await loadNWT() }
@@ -37,6 +40,16 @@ struct BibleView: View {
         testament == .hebrew ? BibleBook.hebrewScriptures : BibleBook.greekScriptures
     }
 
+    // Extract Romanian book name from NWT track title e.g. "Geneza - Capitolul 1" → "Geneza"
+    private func displayName(for book: BibleBook) -> String {
+        guard langSettings.language == .romanian else { return book.name }
+        if let track = nwtTracks.first(where: { $0.booknum == book.id }),
+           let roName = track.title.components(separatedBy: " - ").first {
+            return roName
+        }
+        return book.name
+    }
+
     private var bookList: some View {
         List(books) { book in
             NavigationLink {
@@ -46,7 +59,7 @@ struct BibleView: View {
                     Text(book.abbreviation)
                         .font(.body).bold()
                         .frame(width: 44, alignment: .leading)
-                    Text(book.name)
+                    Text(displayName(for: book))
                         .foregroundStyle(.secondary)
                     Spacer()
                     Text("\(book.chapterCount) ch")
@@ -73,24 +86,36 @@ struct BookChaptersView: View {
     let book: BibleBook
     let allTracks: [PubMediaTrack]
     @EnvironmentObject private var player: AudioPlayer
+    @EnvironmentObject private var langSettings: LanguageSettings
 
     private var bookTracks: [PubMediaTrack] {
         allTracks.filter { $0.booknum == book.id }.sorted { $0.track < $1.track }
     }
     private var bookURLs: [URL] { bookTracks.compactMap { $0.url } }
 
-    var body: some View {
-        Group {
-            if book.needsChapterGroups {
-                groupedList
-            } else {
-                chapterList(tracks: bookTracks, globalOffset: 0)
-            }
+    // Romanian book name from first track title
+    private var displayName: String {
+        guard langSettings.language == .romanian else { return book.name }
+        if let track = bookTracks.first,
+           let roName = track.title.components(separatedBy: " - ").first {
+            return roName
         }
-        .navigationTitle(book.name)
+        return book.name
     }
 
-    private var groupedList: some View {
+    var body: some View {
+        let lang = langSettings.language
+        Group {
+            if book.needsChapterGroups {
+                groupedList(lang: lang)
+            } else {
+                chapterList(tracks: bookTracks, globalOffset: 0, lang: lang)
+            }
+        }
+        .navigationTitle(displayName)
+    }
+
+    private func groupedList(lang: AppLanguage) -> some View {
         let groups = stride(from: 0, to: bookTracks.count, by: BibleBook.chapterGroupSize)
             .map { start -> (Int, Int) in
                 let end = min(start + BibleBook.chapterGroupSize - 1, bookTracks.count - 1)
@@ -100,28 +125,28 @@ struct BookChaptersView: View {
             ForEach(groups, id: \.0) { start, end in
                 let startCh = bookTracks[start].track
                 let endCh   = bookTracks[end].track
-                NavigationLink("Chapters \(startCh)–\(endCh)") {
-                    chapterList(tracks: Array(bookTracks[start...end]), globalOffset: start)
-                        .navigationTitle("Chapters \(startCh)–\(endCh)")
+                NavigationLink("\(lang.chapters) \(startCh)–\(endCh)") {
+                    chapterList(tracks: Array(bookTracks[start...end]), globalOffset: start, lang: lang)
+                        .navigationTitle("\(lang.chapters) \(startCh)–\(endCh)")
                 }
             }
         }
     }
 
     @ViewBuilder
-    private func chapterList(tracks: [PubMediaTrack], globalOffset: Int) -> some View {
+    private func chapterList(tracks: [PubMediaTrack], globalOffset: Int, lang: AppLanguage) -> some View {
         List(tracks.indices, id: \.self) { localIdx in
             let track = tracks[localIdx]
             let globalIdx = globalOffset + localIdx
             Button {
                 let playlistURLs = Array(bookURLs.dropFirst(globalIdx))
                 player.play(urls: playlistURLs,
-                            title: "\(book.name) \(track.track)",
-                            subtitle: book.name,
+                            title: "\(displayName) \(track.track)",
+                            subtitle: displayName,
                             artwork: "text.book.closed.fill")
             } label: {
                 HStack {
-                    Text("Chapter \(track.track)")
+                    Text("\(lang.chapter) \(track.track)")
                     Spacer()
                     Image(systemName: "play.circle")
                         .foregroundStyle(Color.accentColor)

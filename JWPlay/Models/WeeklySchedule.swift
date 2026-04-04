@@ -29,11 +29,13 @@ enum WeekOffset: Int, CaseIterable {
     case current = 0
     case next = 1
 
-    var label: String {
+    var label: String { label(for: .english) }
+
+    func label(for language: AppLanguage) -> String {
         switch self {
-        case .last:    return "Last Week"
-        case .current: return "This Week"
-        case .next:    return "Next Week"
+        case .last:    return language.lastWeek
+        case .current: return language.thisWeek
+        case .next:    return language.nextWeek
         }
     }
 }

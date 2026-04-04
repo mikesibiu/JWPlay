@@ -20,34 +20,33 @@ struct ContentView: View {
                 .padding(.vertical, 6)
             }
             .background(Color(uiColor: .systemBackground))
-            .overlay(alignment: .bottom) {
-                Divider()
-            }
+            .overlay(alignment: .bottom) { Divider() }
 
+            let lang = langSettings.language
             TabView {
                 MeetingsView()
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         if !player.currentTitle.isEmpty { PlayerBar() }
                     }
-                    .tabItem { Label("Meetings", systemImage: "calendar") }
+                    .tabItem { Label(lang.meetings, systemImage: "calendar") }
 
                 BibleView()
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         if !player.currentTitle.isEmpty { PlayerBar() }
                     }
-                    .tabItem { Label("Bible", systemImage: "text.book.closed.fill") }
+                    .tabItem { Label(lang.bible, systemImage: "text.book.closed.fill") }
 
                 SongsView()
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         if !player.currentTitle.isEmpty { PlayerBar() }
                     }
-                    .tabItem { Label("Songs", systemImage: "music.note") }
+                    .tabItem { Label(lang.songs, systemImage: "music.note") }
 
                 BroadcastingView()
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         if !player.currentTitle.isEmpty { PlayerBar() }
                     }
-                    .tabItem { Label("Broadcasting", systemImage: "tv") }
+                    .tabItem { Label(lang.broadcasting, systemImage: "tv") }
             }
         }
     }

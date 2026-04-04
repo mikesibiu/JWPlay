@@ -8,10 +8,13 @@ struct MeetingsView: View {
     @State private var selected: WeekOffset = .current
 
     var body: some View {
+        let lang = langSettings.language
         NavigationStack {
             VStack(spacing: 0) {
                 Picker("Week", selection: $selected) {
-                    ForEach(WeekOffset.allCases, id: \.self) { Text($0.label).tag($0) }
+                    ForEach(WeekOffset.allCases, id: \.self) { offset in
+                        Text(offset.label(for: lang)).tag(offset)
+                    }
                 }
                 .pickerStyle(.segmented)
                 .padding()
@@ -25,13 +28,13 @@ struct MeetingsView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "calendar.badge.exclamationmark")
                             .font(.largeTitle).foregroundStyle(.secondary)
-                        Text("Unable to load meeting content")
+                        Text(lang.contentUnavailable)
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-            .navigationTitle("Weekly Meetings")
+            .navigationTitle(lang.weeklyMeetings)
             .task(id: selected) { await loadSchedule(for: selected) }
             .onChange(of: langSettings.language) { _ in
                 schedules = [:]
@@ -64,33 +67,32 @@ struct MeetingsView: View {
 struct WeekContentView: View {
     let schedule: WeeklySchedule
     @EnvironmentObject private var player: AudioPlayer
+    @EnvironmentObject private var langSettings: LanguageSettings
 
     var body: some View {
+        let lang = langSettings.language
         List {
             Section(schedule.weekLabel) {
                 if let url = schedule.mwbURL {
                     ContentRow(title: schedule.mwbTitle,
-                               subtitle: "Meeting Workbook",
-                               icon: "book.fill",
-                               color: .orange) {
+                               subtitle: lang.meetingWorkbook,
+                               icon: "book.fill", color: .orange) {
                         player.play(urls: [url], title: schedule.mwbTitle,
                                     subtitle: schedule.weekLabel, artwork: "book.fill")
                     }
                 }
                 if let url = schedule.watchtowerURL {
                     ContentRow(title: schedule.watchtowerTitle,
-                               subtitle: "Watchtower Study",
-                               icon: "book.closed.fill",
-                               color: .blue) {
+                               subtitle: lang.watchtowerStudy,
+                               icon: "book.closed.fill", color: .blue) {
                         player.play(urls: [url], title: schedule.watchtowerTitle,
                                     subtitle: schedule.weekLabel, artwork: "book.closed.fill")
                     }
                 }
                 if !schedule.bibleReadingURLs.isEmpty {
                     ContentRow(title: schedule.bibleReadingTitle,
-                               subtitle: "Bible Reading",
-                               icon: "text.book.closed.fill",
-                               color: .green) {
+                               subtitle: lang.bibleReading,
+                               icon: "text.book.closed.fill", color: .green) {
                         player.play(urls: schedule.bibleReadingURLs,
                                     title: schedule.bibleReadingTitle,
                                     subtitle: schedule.weekLabel, artwork: "text.book.closed.fill")
@@ -98,17 +100,16 @@ struct WeekContentView: View {
                 }
                 if !schedule.cbsURLs.isEmpty {
                     ContentRow(title: schedule.cbsTitle,
-                               subtitle: "Congregation Bible Study",
-                               icon: "person.3.fill",
-                               color: .purple) {
+                               subtitle: lang.congregationBibleStudy,
+                               icon: "person.3.fill", color: .purple) {
                         player.play(urls: schedule.cbsURLs,
                                     title: schedule.cbsTitle,
                                     subtitle: schedule.weekLabel, artwork: "person.3.fill")
                     }
                 }
-                if schedule.mwbURL == nil && schedule.watchtowerURL == nil &&
-                   schedule.bibleReadingURLs.isEmpty && schedule.cbsURLs.isEmpty {
-                    Label("Content not yet available", systemImage: "clock")
+                if !schedule.hasMWB && !schedule.hasWatchtower &&
+                   !schedule.hasBibleReading && !schedule.hasCBS {
+                    Label(lang.contentUnavailable, systemImage: "clock")
                         .foregroundStyle(.secondary)
                 }
             }
@@ -132,7 +133,6 @@ struct ContentRow: View {
                     .foregroundStyle(.white)
                     .frame(width: 36, height: 36)
                     .background(color, in: RoundedRectangle(cornerRadius: 8))
-
                 VStack(alignment: .leading, spacing: 2) {
                     Text(subtitle).font(.subheadline).bold().foregroundStyle(.primary)
                     Text(title).font(.caption).foregroundStyle(.secondary).lineLimit(2)
