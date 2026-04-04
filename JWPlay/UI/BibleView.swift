@@ -5,6 +5,7 @@ struct BibleView: View {
     @State private var nwtTracks: [PubMediaTrack] = []
     @State private var loading = true
     @State private var testament: BibleBook.Testament = .hebrew
+
     var body: some View {
         let lang = langSettings.language
         NavigationStack {
@@ -25,12 +26,11 @@ struct BibleView: View {
             }
             .navigationTitle(lang.bible)
             .task { await loadNWT() }
-        }
-        .id(langSettings.language)
-        .onChange(of: langSettings.language) { _ in
-            nwtTracks = []
-            loading = true
-            Task { await loadNWT() }
+            .onChange(of: langSettings.language) { _ in
+                nwtTracks = []
+                loading = true
+                Task { await loadNWT() }
+            }
         }
     }
 
@@ -51,7 +51,7 @@ struct BibleView: View {
     private var bookList: some View {
         List(books) { book in
             NavigationLink {
-                BookChaptersView(book: book, allTracks: nwtTracks)
+                BookChaptersView(book: book, allTracks: $nwtTracks)
             } label: {
                 HStack {
                     Text(book.abbreviation)
@@ -82,7 +82,7 @@ struct BibleView: View {
 
 struct BookChaptersView: View {
     let book: BibleBook
-    let allTracks: [PubMediaTrack]
+    @Binding var allTracks: [PubMediaTrack]
     @EnvironmentObject private var player: AudioPlayer
     @EnvironmentObject private var langSettings: LanguageSettings
 

@@ -5,6 +5,7 @@ struct SongsView: View {
     @EnvironmentObject private var langSettings: LanguageSettings
     @State private var songs: [PubMediaTrack] = []
     @State private var loading = true
+
     private let groupSize = 20
 
     private var groups: [[PubMediaTrack]] {
@@ -23,13 +24,16 @@ struct SongsView: View {
                 } else {
                     List {
                         ForEach(groups.indices, id: \.self) { idx in
-                            let group = groups[idx]
-                            let first = group.first?.track ?? 0
-                            let last  = group.last?.track  ?? 0
-                            let label = String(format: "\(lang.songs) %03d–%03d", first, last)
-                            NavigationLink(label) {
-                                SongGroupView(songs: group)
-                                    .navigationTitle(label)
+                            let start = idx * groupSize
+                            NavigationLink {
+                                SongGroupView(groupStart: start,
+                                              groupSize: groupSize,
+                                              allSongs: $songs)
+                            } label: {
+                                let group = groups[idx]
+                                let first = group.first?.track ?? 0
+                                let last  = group.last?.track  ?? 0
+                                Text(String(format: "\(lang.songs) %03d–%03d", first, last))
                             }
                         }
                     }
@@ -38,12 +42,11 @@ struct SongsView: View {
             }
             .navigationTitle(lang.kingdomSongs)
             .task { await loadSongs() }
-        }
-        .id(langSettings.language)
-        .onChange(of: langSettings.language) { _ in
-            songs = []
-            loading = true
-            Task { await loadSongs() }
+            .onChange(of: langSettings.language) { _ in
+                songs = []
+                loading = true
+                Task { await loadSongs() }
+            }
         }
     }
 
@@ -57,10 +60,21 @@ struct SongsView: View {
 }
 
 struct SongGroupView: View {
-    let songs: [PubMediaTrack]
+    let groupStart: Int
+    let groupSize: Int
+    @Binding var allSongs: [PubMediaTrack]
     @EnvironmentObject private var player: AudioPlayer
+    @EnvironmentObject private var langSettings: LanguageSettings
+
+    private var songs: [PubMediaTrack] {
+        guard groupStart < allSongs.count else { return [] }
+        return Array(allSongs[groupStart..<min(groupStart + groupSize, allSongs.count)])
+    }
 
     var body: some View {
+        let lang = langSettings.language
+        let first = songs.first?.track ?? 0
+        let last  = songs.last?.track  ?? 0
         List {
             ForEach(songs, id: \.track) { song in
                 Button {
@@ -84,5 +98,6 @@ struct SongGroupView: View {
                 .buttonStyle(.plain)
             }
         }
+        .navigationTitle(songs.isEmpty ? "" : String(format: "\(lang.songs) %03d–%03d", first, last))
     }
 }
