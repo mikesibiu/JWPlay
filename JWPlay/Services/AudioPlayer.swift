@@ -172,10 +172,16 @@ final class AudioPlayer: ObservableObject {
             MPMediaItemPropertyMediaType:        MPMediaType.podcast.rawValue,
         ]
         if let player, let item = player.currentItem {
-            let duration = item.asset.duration.seconds
-            let position = item.currentTime().seconds
-            if duration.isFinite { info[MPMediaItemPropertyPlaybackDuration] = duration }
-            if position.isFinite { info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = position }
+            let duration = item.asset.duration
+            let position = item.currentTime()
+            let durationSecs = duration.seconds
+            let positionSecs = position.seconds
+            if durationSecs.isFinite && !durationSecs.isNaN {
+                info[MPMediaItemPropertyPlaybackDuration] = durationSecs
+            }
+            if positionSecs.isFinite && !positionSecs.isNaN {
+                info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = positionSecs
+            }
         }
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
     }

@@ -59,12 +59,15 @@ final class CarPlayTemplateProvider {
         interfaceController?.pushTemplate(loadingTemplate, animated: true, completion: nil)
 
         // Check cache first
+        let lang = LanguageSettings.shared.language
         let schedule: WeeklySchedule
-        if let cached = CacheService.shared.cachedSchedule(for: weekDate.isoKey) {
+        if let cached = CacheService.shared.cachedSchedule(for: weekDate.isoKey, language: lang) {
             schedule = cached
         } else {
-            schedule = await api.buildWeeklySchedule(for: weekDate)
-            CacheService.shared.cache(schedule: schedule, for: weekDate.isoKey)
+            schedule = await api.buildWeeklySchedule(for: weekDate, language: lang)
+            if schedule.hasAnyContent {
+                CacheService.shared.cache(schedule: schedule, for: weekDate.isoKey, language: lang)
+            }
         }
 
         var items: [CPListItem] = []
@@ -183,7 +186,7 @@ final class CarPlayTemplateProvider {
     }
 
     private func showBook(_ book: BibleBook) async {
-        guard let nwt = await api.ensureNWT() else { return }
+        guard let nwt = await api.ensureNWT(language: LanguageSettings.shared.language) else { return }
         let chapters = nwt
             .filter { $0.booknum == book.id }
             .sorted { $0.track < $1.track }
@@ -243,7 +246,7 @@ final class CarPlayTemplateProvider {
     // MARK: - Kingdom Songs
 
     private func showSongGroups() async {
-        guard let songs = await api.ensureSongs() else { return }
+        guard let songs = await api.ensureSongs(language: LanguageSettings.shared.language) else { return }
         let sorted = songs.sorted { $0.track < $1.track }
 
         let groups = stride(from: 0, to: sorted.count, by: songGroupSize).map { start -> CPListItem in
