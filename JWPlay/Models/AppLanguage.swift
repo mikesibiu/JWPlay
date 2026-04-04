@@ -205,6 +205,13 @@ enum AppLanguage: String, CaseIterable {
         case .romanian: return "Drame Biblice"
         }
     }
+    var bibleAndSongs: String {
+        switch self {
+        case .english:  return "Bible & Songs"
+        case .french:   return "Bible et Cantiques"
+        case .romanian: return "Biblie și Cântări"
+        }
+    }
 }
 
 final class LanguageSettings: ObservableObject {

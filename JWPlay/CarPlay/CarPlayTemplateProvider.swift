@@ -9,6 +9,8 @@ final class CarPlayTemplateProvider {
     private let songGroupSize = 20
     private let chapterGroupSize = BibleBook.chapterGroupSize
 
+    private var lang: AppLanguage { LanguageSettings.shared.language }
+
     init(interfaceController: CPInterfaceController) {
         self.interfaceController = interfaceController
     }
@@ -21,8 +23,8 @@ final class CarPlayTemplateProvider {
     }
 
     private func makeRootTemplate() -> CPListTemplate {
-        let meetingsItem = makeBrowsableItem("Weekly Meetings", detail: "This, last & next week", systemImage: "calendar")
-        let bibleItem    = makeBrowsableItem("Bible & Songs", detail: "All 66 books + Kingdom Songs", systemImage: "book")
+        let meetingsItem = makeBrowsableItem(lang.weeklyMeetings, detail: "\(lang.lastWeek), \(lang.thisWeek), \(lang.nextWeek)", systemImage: "calendar")
+        let bibleItem    = makeBrowsableItem(lang.bibleAndSongs, detail: nil, systemImage: "book")
 
         meetingsItem.handler = { [weak self] _, done in
             Task { @MainActor in await self?.showMeetings(); done() }
@@ -40,40 +42,38 @@ final class CarPlayTemplateProvider {
     private func showMeetings() async {
         let items = WeekOffset.allCases.map { offset -> CPListItem in
             let weekDate = WeekDate(offset: offset)
-            let item = makeBrowsableItem(offset.label, detail: weekDate.displayLabel)
+            let item = makeBrowsableItem(offset.label(for: lang), detail: weekDate.displayLabel)
             item.handler = { [weak self] _, done in
                 Task { @MainActor in await self?.showWeekContent(weekDate: weekDate); done() }
             }
             return item
         }
         let section = CPListSection(items: items)
-        let template = CPListTemplate(title: "Weekly Meetings", sections: [section])
+        let template = CPListTemplate(title: lang.weeklyMeetings, sections: [section])
         interfaceController?.pushTemplate(template, animated: true, completion: nil)
     }
 
     private func showWeekContent(weekDate: WeekDate) async {
-        // Show a loading state first
         let loadingItem = CPListItem(text: "Loading…", detailText: weekDate.displayLabel)
         let loadingTemplate = CPListTemplate(title: weekDate.displayLabel,
                                              sections: [CPListSection(items: [loadingItem])])
         interfaceController?.pushTemplate(loadingTemplate, animated: true, completion: nil)
 
-        // Check cache first
-        let lang = LanguageSettings.shared.language
+        let currentLang = lang
         let schedule: WeeklySchedule
-        if let cached = CacheService.shared.cachedSchedule(for: weekDate.isoKey, language: lang) {
+        if let cached = CacheService.shared.cachedSchedule(for: weekDate.isoKey, language: currentLang) {
             schedule = cached
         } else {
-            schedule = await api.buildWeeklySchedule(for: weekDate, language: lang)
+            schedule = await api.buildWeeklySchedule(for: weekDate, language: currentLang)
             if schedule.hasAnyContent {
-                CacheService.shared.cache(schedule: schedule, for: weekDate.isoKey, language: lang)
+                CacheService.shared.cache(schedule: schedule, for: weekDate.isoKey, language: currentLang)
             }
         }
 
         var items: [CPListItem] = []
 
         if let url = schedule.mwbURL {
-            let item = makePlayableItem(schedule.mwbTitle, detail: "Meeting Workbook")
+            let item = makePlayableItem(schedule.mwbTitle, detail: currentLang.meetingWorkbook)
             item.handler = { [weak self] _, done in
                 Task { @MainActor in
                     self?.player.play(urls: [url], title: schedule.mwbTitle,
@@ -87,7 +87,7 @@ final class CarPlayTemplateProvider {
         }
 
         if let url = schedule.watchtowerURL {
-            let item = makePlayableItem(schedule.watchtowerTitle, detail: "Watchtower Study")
+            let item = makePlayableItem(schedule.watchtowerTitle, detail: currentLang.watchtowerStudy)
             item.handler = { [weak self] _, done in
                 Task { @MainActor in
                     self?.player.play(urls: [url], title: schedule.watchtowerTitle,
@@ -101,7 +101,7 @@ final class CarPlayTemplateProvider {
         }
 
         if !schedule.bibleReadingURLs.isEmpty {
-            let item = makePlayableItem(schedule.bibleReadingTitle, detail: "Bible Reading")
+            let item = makePlayableItem(schedule.bibleReadingTitle, detail: currentLang.bibleReading)
             let urls = schedule.bibleReadingURLs
             item.handler = { [weak self] _, done in
                 Task { @MainActor in
@@ -116,7 +116,7 @@ final class CarPlayTemplateProvider {
         }
 
         if !schedule.cbsURLs.isEmpty {
-            let item = makePlayableItem(schedule.cbsTitle, detail: "Congregation Bible Study")
+            let item = makePlayableItem(schedule.cbsTitle, detail: currentLang.congregationBibleStudy)
             let urls = schedule.cbsURLs
             item.handler = { [weak self] _, done in
                 Task { @MainActor in
@@ -131,14 +131,13 @@ final class CarPlayTemplateProvider {
         }
 
         if items.isEmpty {
-            let empty = CPListItem(text: "Content unavailable", detailText: "Check connection")
+            let empty = CPListItem(text: currentLang.contentUnavailable, detailText: nil)
             items = [empty]
         }
 
         let section = CPListSection(items: items)
         let template = CPListTemplate(title: weekDate.displayLabel, sections: [section])
 
-        // Wait for pop to complete before pushing — avoids template stack race condition
         guard let ic = interfaceController else { return }
         await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
             ic.popTemplate(animated: false) { _, _ in continuation.resume() }
@@ -149,16 +148,17 @@ final class CarPlayTemplateProvider {
     // MARK: - Bible & Songs
 
     private func showBibleAndSongs() {
-        let hebrewItem = makeBrowsableItem("Hebrew Scriptures", detail: "Genesis – Malachi")
-        let greekItem  = makeBrowsableItem("Greek Scriptures", detail: "Matthew – Revelation")
-        let songsItem  = makeBrowsableItem("Kingdom Songs", detail: "160+ songs")
+        let currentLang = lang
+        let hebrewItem = makeBrowsableItem(currentLang.hebrewScriptures, detail: nil)
+        let greekItem  = makeBrowsableItem(currentLang.greekScriptures, detail: nil)
+        let songsItem  = makeBrowsableItem(currentLang.kingdomSongs, detail: nil)
 
         hebrewItem.handler = { [weak self] _, done in
-            self?.showBookList(books: BibleBook.hebrewScriptures, title: "Hebrew Scriptures")
+            self?.showBookList(books: BibleBook.hebrewScriptures, title: currentLang.hebrewScriptures)
             done()
         }
         greekItem.handler = { [weak self] _, done in
-            self?.showBookList(books: BibleBook.greekScriptures, title: "Greek Scriptures")
+            self?.showBookList(books: BibleBook.greekScriptures, title: currentLang.greekScriptures)
             done()
         }
         songsItem.handler = { [weak self] _, done in
@@ -166,17 +166,19 @@ final class CarPlayTemplateProvider {
         }
 
         let section = CPListSection(items: [hebrewItem, greekItem, songsItem])
-        let template = CPListTemplate(title: "Bible & Songs", sections: [section])
+        let template = CPListTemplate(title: currentLang.bibleAndSongs, sections: [section])
         interfaceController?.pushTemplate(template, animated: true, completion: nil)
     }
 
     // MARK: - Bible books
 
     private func showBookList(books: [BibleBook], title: String) {
+        let currentLang = lang
+        let nwtCache = api  // just for reference; actual book names fetched in showBook
         let items = books.map { book -> CPListItem in
             let item = makeBrowsableItem(book.abbreviation, detail: book.name)
             item.handler = { [weak self] _, done in
-                Task { @MainActor in await self?.showBook(book); done() }
+                Task { @MainActor in await self?.showBook(book, lang: currentLang); done() }
             }
             return item
         }
@@ -185,51 +187,59 @@ final class CarPlayTemplateProvider {
         interfaceController?.pushTemplate(template, animated: true, completion: nil)
     }
 
-    private func showBook(_ book: BibleBook) async {
-        guard let nwt = await api.ensureNWT(language: LanguageSettings.shared.language) else { return }
+    private func showBook(_ book: BibleBook, lang: AppLanguage) async {
+        guard let nwt = await api.ensureNWT(language: lang) else { return }
         let chapters = nwt
             .filter { $0.booknum == book.id }
             .sorted { $0.track < $1.track }
         let allURLs = chapters.compactMap { $0.url }
 
-        if book.needsChapterGroups {
-            showChapterGroups(book: book, chapters: chapters, allURLs: allURLs)
+        // Extract localized book name from track title (FR/RO use " - " separator)
+        let displayName: String
+        if lang == .romanian || lang == .french,
+           let first = chapters.first,
+           let localName = first.title.components(separatedBy: " - ").first {
+            displayName = localName
         } else {
-            showChapterList(book: book, chapters: chapters, allURLs: allURLs, groupOffset: 0)
+            displayName = book.name
+        }
+
+        if book.needsChapterGroups {
+            showChapterGroups(book: book, displayName: displayName, chapters: chapters, allURLs: allURLs, lang: lang)
+        } else {
+            showChapterList(book: book, displayName: displayName, chapters: chapters, allURLs: allURLs, groupOffset: 0, lang: lang)
         }
     }
 
-    private func showChapterGroups(book: BibleBook, chapters: [PubMediaTrack], allURLs: [URL]) {
+    private func showChapterGroups(book: BibleBook, displayName: String, chapters: [PubMediaTrack], allURLs: [URL], lang: AppLanguage) {
         let groups = stride(from: 0, to: chapters.count, by: chapterGroupSize).map { start -> CPListItem in
             let end = min(start + chapterGroupSize - 1, chapters.count - 1)
             let startCh = chapters[start].track
             let endCh   = chapters[end].track
-            let item = makeBrowsableItem("Chapters \(startCh)–\(endCh)", detail: book.name)
+            let item = makeBrowsableItem("\(lang.chapters) \(startCh)–\(endCh)", detail: displayName)
             item.handler = { [weak self] _, done in
-                self?.showChapterList(book: book,
+                self?.showChapterList(book: book, displayName: displayName,
                                       chapters: Array(chapters[start...end]),
-                                      allURLs: allURLs,
-                                      groupOffset: start)
+                                      allURLs: allURLs, groupOffset: start, lang: lang)
                 done()
             }
             return item
         }
         let section = CPListSection(items: groups)
-        let template = CPListTemplate(title: book.name, sections: [section])
+        let template = CPListTemplate(title: displayName, sections: [section])
         interfaceController?.pushTemplate(template, animated: true, completion: nil)
     }
 
-    private func showChapterList(book: BibleBook, chapters: [PubMediaTrack], allURLs: [URL], groupOffset: Int) {
+    private func showChapterList(book: BibleBook, displayName: String, chapters: [PubMediaTrack], allURLs: [URL], groupOffset: Int, lang: AppLanguage) {
         let items = chapters.enumerated().map { (localIdx, ch) -> CPListItem in
             let globalIdx = groupOffset + localIdx
-            let item = makePlayableItem("Chapter \(ch.track)", detail: book.name)
+            let item = makePlayableItem("\(lang.chapter) \(ch.track)", detail: displayName)
             item.handler = { [weak self] _, done in
                 Task { @MainActor in
-                    // Playlist from tapped chapter to end of book
                     let playlistURLs = Array(allURLs.dropFirst(globalIdx))
                     self?.player.play(urls: playlistURLs,
-                                      title: "\(book.name) \(ch.track)",
-                                      subtitle: book.name,
+                                      title: "\(displayName) \(ch.track)",
+                                      subtitle: displayName,
                                       artwork: "text.book.closed.fill")
                     self?.interfaceController?.pushTemplate(CPNowPlayingTemplate.shared,
                                                            animated: true, completion: nil)
@@ -239,34 +249,35 @@ final class CarPlayTemplateProvider {
             return item
         }
         let section = CPListSection(items: items)
-        let template = CPListTemplate(title: book.name, sections: [section])
+        let template = CPListTemplate(title: displayName, sections: [section])
         interfaceController?.pushTemplate(template, animated: true, completion: nil)
     }
 
     // MARK: - Kingdom Songs
 
     private func showSongGroups() async {
-        guard let songs = await api.ensureSongs(language: LanguageSettings.shared.language) else { return }
+        let currentLang = lang
+        guard let songs = await api.ensureSongs(language: currentLang) else { return }
         let sorted = songs.sorted { $0.track < $1.track }
 
         let groups = stride(from: 0, to: sorted.count, by: songGroupSize).map { start -> CPListItem in
             let end = min(start + songGroupSize - 1, sorted.count - 1)
             let startNum = sorted[start].track
             let endNum   = sorted[end].track
-            let label = String(format: "Songs %03d–%03d", startNum, endNum)
+            let label = String(format: "\(currentLang.songs) %03d–%03d", startNum, endNum)
             let item = makeBrowsableItem(label, detail: nil)
             item.handler = { [weak self] _, done in
-                self?.showSongList(Array(sorted[start...end]))
+                self?.showSongList(Array(sorted[start...end]), lang: currentLang)
                 done()
             }
             return item
         }
         let section = CPListSection(items: groups)
-        let template = CPListTemplate(title: "Kingdom Songs", sections: [section])
+        let template = CPListTemplate(title: currentLang.kingdomSongs, sections: [section])
         interfaceController?.pushTemplate(template, animated: true, completion: nil)
     }
 
-    private func showSongList(_ songs: [PubMediaTrack]) {
+    private func showSongList(_ songs: [PubMediaTrack], lang: AppLanguage) {
         let items = songs.compactMap { song -> CPListItem? in
             guard let url = song.url else { return nil }
             let numStr = String(format: "%03d", song.track)
@@ -275,7 +286,7 @@ final class CarPlayTemplateProvider {
             item.handler = { [weak self] _, done in
                 Task { @MainActor in
                     self?.player.play(urls: [url], title: song.title,
-                                      subtitle: "Kingdom Song \(song.track)", artwork: "music.note")
+                                      subtitle: "\(lang.songs) \(song.track)", artwork: "music.note")
                     self?.interfaceController?.pushTemplate(CPNowPlayingTemplate.shared,
                                                            animated: true, completion: nil)
                     done()
@@ -284,7 +295,7 @@ final class CarPlayTemplateProvider {
             return item
         }
         let section = CPListSection(items: items)
-        let template = CPListTemplate(title: "Kingdom Songs", sections: [section])
+        let template = CPListTemplate(title: lang.kingdomSongs, sections: [section])
         interfaceController?.pushTemplate(template, animated: true, completion: nil)
     }
 
