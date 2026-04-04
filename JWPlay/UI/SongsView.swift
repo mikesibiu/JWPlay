@@ -5,8 +5,6 @@ struct SongsView: View {
     @EnvironmentObject private var langSettings: LanguageSettings
     @State private var songs: [PubMediaTrack] = []
     @State private var loading = true
-    @State private var navPath = NavigationPath()
-
     private let groupSize = 20
 
     private var groups: [[PubMediaTrack]] {
@@ -17,7 +15,7 @@ struct SongsView: View {
 
     var body: some View {
         let lang = langSettings.language
-        NavigationStack(path: $navPath) {
+        NavigationStack {
             Group {
                 if loading {
                     ProgressView(lang.loadingSongs)
@@ -40,12 +38,12 @@ struct SongsView: View {
             }
             .navigationTitle(lang.kingdomSongs)
             .task { await loadSongs() }
-            .onChange(of: langSettings.language) { _ in
-                navPath = NavigationPath()
-                songs = []
-                loading = true
-                Task { await loadSongs() }
-            }
+        }
+        .id(langSettings.language)
+        .onChange(of: langSettings.language) { _ in
+            songs = []
+            loading = true
+            Task { await loadSongs() }
         }
     }
 

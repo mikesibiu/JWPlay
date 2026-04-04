@@ -5,11 +5,9 @@ struct BibleView: View {
     @State private var nwtTracks: [PubMediaTrack] = []
     @State private var loading = true
     @State private var testament: BibleBook.Testament = .hebrew
-    @State private var navPath = NavigationPath()
-
     var body: some View {
         let lang = langSettings.language
-        NavigationStack(path: $navPath) {
+        NavigationStack {
             VStack(spacing: 0) {
                 Picker("Testament", selection: $testament) {
                     Text(lang.hebrewScriptures).tag(BibleBook.Testament.hebrew)
@@ -27,12 +25,12 @@ struct BibleView: View {
             }
             .navigationTitle(lang.bible)
             .task { await loadNWT() }
-            .onChange(of: langSettings.language) { _ in
-                navPath = NavigationPath()
-                nwtTracks = []
-                loading = true
-                Task { await loadNWT() }
-            }
+        }
+        .id(langSettings.language)
+        .onChange(of: langSettings.language) { _ in
+            nwtTracks = []
+            loading = true
+            Task { await loadNWT() }
         }
     }
 
