@@ -44,6 +44,8 @@ enum AppLanguage: String, CaseIterable {
     var loadingBible: String       { self == .romanian ? "Se încarcă Biblia…"      : "Loading Bible catalog…" }
     var loadingSongs: String       { self == .romanian ? "Se încarcă cântările…"   : "Loading songs…" }
     var loadingBroadcasts: String  { self == .romanian ? "Se încarcă emisiunile…"  : "Loading broadcasts…" }
+    var bibleDramas: String        { self == .romanian ? "Drame Biblice"           : "Bible Dramas" }
+    var loadingDramas: String      { self == .romanian ? "Se încarcă dramele…"     : "Loading dramas…" }
     var contentUnavailable: String { self == .romanian ? "Conținut indisponibil"   : "Content not yet available" }
     var broadcastingUnavailable: String { self == .romanian ? "Conținutul emisiunilor nu a putut fi încărcat." : "JW Broadcasting content could not be loaded." }
     var broadcastingTitle: String  { self == .romanian ? "Emisiuni JW"             : "JW Broadcasting" }

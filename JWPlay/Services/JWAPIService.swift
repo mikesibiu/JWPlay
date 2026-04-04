@@ -109,6 +109,10 @@ actor JWAPIService {
         return Array((gbu + mon).prefix(30))
     }
 
+    func fetchDramas(language: AppLanguage) async -> [BroadcastingTrack] {
+        await fetchMediatorCategory("VOXDramas", isGB: false, language: language, filterByDate: false)
+    }
+
     // MARK: - Private fetches
 
     private func fetchMWBTrack(weekDate: WeekDate) async -> PubMediaTrack? {
@@ -173,7 +177,8 @@ actor JWAPIService {
         return digits.isEmpty ? nil : Int(digits)
     }
 
-    private func fetchMediatorCategory(_ category: String, isGB: Bool, language: AppLanguage) async -> [BroadcastingTrack] {
+    private func fetchMediatorCategory(_ category: String, isGB: Bool, language: AppLanguage,
+                                       filterByDate: Bool = true) async -> [BroadcastingTrack] {
         let urlString = "\(mediatorBase)/categories/\(language.rawValue)/\(category)?detailed=1"
         guard let url = URL(string: urlString),
               let (data, _) = try? await session.data(from: url) else { return [] }
@@ -189,7 +194,7 @@ actor JWAPIService {
 
         return response.items()
             .filter { item in
-                guard let date = item.publishedDate else { return true }
+                guard filterByDate, let date = item.publishedDate else { return true }
                 return date > cutoff
             }
             .sorted { ($0.publishedDate ?? .distantPast) > ($1.publishedDate ?? .distantPast) }
