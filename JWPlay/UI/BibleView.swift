@@ -25,11 +25,13 @@ struct BibleView: View {
                 }
             }
             .navigationTitle(lang.bible)
-            .task { await loadNWT() }
-            .onChange(of: langSettings.language) { _ in
+            .task(id: langSettings.language) {
                 nwtTracks = []
                 loading = true
-                Task { await loadNWT() }
+                if let tracks = await JWAPIService.shared.ensureNWT(language: langSettings.language) {
+                    nwtTracks = tracks
+                }
+                loading = false
             }
         }
     }

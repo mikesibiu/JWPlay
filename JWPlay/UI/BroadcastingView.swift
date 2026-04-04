@@ -72,20 +72,15 @@ struct BroadcastingView: View {
                 }
             }
             .navigationTitle(lang.broadcastingTitle)
-            .task { await load() }
-            .onChange(of: langSettings.language) { _ in
+            .task(id: langSettings.language) {
                 tracks = []
-                Task { await load() }
+                loading = true
+                failed = false
+                tracks = await JWAPIService.shared.fetchBroadcasting(language: langSettings.language)
+                if tracks.isEmpty { failed = true }
+                loading = false
             }
         }
-    }
-
-    private func load() async {
-        loading = true
-        failed = false
-        tracks = await JWAPIService.shared.fetchBroadcasting(language: langSettings.language)
-        if tracks.isEmpty { failed = true }
-        loading = false
     }
 }
 
@@ -140,17 +135,11 @@ struct DramasListView: View {
             }
         }
         .navigationTitle(lang.bibleDramas)
-        .task { await load() }
-        .onChange(of: langSettings.language) { _ in
+        .task(id: langSettings.language) {
             dramas = []
             loading = true
-            Task { await load() }
+            dramas = await JWAPIService.shared.fetchDramas(language: langSettings.language)
+            loading = false
         }
-    }
-
-    private func load() async {
-        loading = true
-        dramas = await JWAPIService.shared.fetchDramas(language: langSettings.language)
-        loading = false
     }
 }

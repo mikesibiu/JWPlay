@@ -41,21 +41,15 @@ struct SongsView: View {
                 }
             }
             .navigationTitle(lang.kingdomSongs)
-            .task { await loadSongs() }
-            .onChange(of: langSettings.language) { _ in
+            .task(id: langSettings.language) {
                 songs = []
                 loading = true
-                Task { await loadSongs() }
+                if let tracks = await JWAPIService.shared.ensureSongs(language: langSettings.language) {
+                    songs = tracks.sorted { $0.track < $1.track }
+                }
+                loading = false
             }
         }
-    }
-
-    private func loadSongs() async {
-        guard songs.isEmpty else { return }
-        if let tracks = await JWAPIService.shared.ensureSongs(language: langSettings.language) {
-            songs = tracks.sorted { $0.track < $1.track }
-        }
-        loading = false
     }
 }
 
