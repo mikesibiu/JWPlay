@@ -23,6 +23,7 @@
 		B62041E64B0DC1DE39A702C9 /* SongsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50CB6F41C9E8E1342FAC202 /* SongsView.swift */; };
 		B74F0460DE49F14598F019D0 /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FC5D08401B3746F1ABA43A /* CarPlaySceneDelegate.swift */; };
 		C0B74E49ACF65E151EE4291E /* JWPlayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA60B0BA9DBD478DBD2F8191 /* JWPlayApp.swift */; };
+		C71FC5686280934AE62F7A1C /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29E5E85204DA581CB85D110A /* AppLanguage.swift */; };
 		CA79F3C49408DA3CDC52E0B5 /* PlayerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B159486C7C867C49789F1063 /* PlayerBar.swift */; };
 		ED1EF6C4E753E6BB7E416584 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146DC32DB12DEF5389FA0CD6 /* AudioPlayer.swift */; };
 		EECBC1E803D1302BF4B4798E /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FED5553676D95B3AA608F5 /* CacheService.swift */; };
@@ -35,6 +36,7 @@
 		0B7CE43C8C08327105900780 /* CarPlayTemplateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlayTemplateProvider.swift; sourceTree = "<group>"; };
 		146DC32DB12DEF5389FA0CD6 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		1B203DDD1A7EFC467BFCE8E3 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		29E5E85204DA581CB85D110A /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		38AB10578DB5519E24F1131A /* MeetingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsView.swift; sourceTree = "<group>"; };
 		3B15AFF5979E81B30FC50094 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		4771917648923343D381FD05 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 		336CCD14E8886B2BD42D729D /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				29E5E85204DA581CB85D110A /* AppLanguage.swift */,
 				C874F21BA209C84278BD073F /* BibleBook.swift */,
 				D484BE37A5FA53FBCC8B149B /* PubMediaResponse.swift */,
 				9F251F922ACFEEF9D9612B04 /* WeeklySchedule.swift */,
@@ -238,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BB57586B0DC839BBDB6848E /* AppDelegate.swift in Sources */,
+				C71FC5686280934AE62F7A1C /* AppLanguage.swift in Sources */,
 				ED1EF6C4E753E6BB7E416584 /* AudioPlayer.swift in Sources */,
 				234CE5C3B1C446D3D5963C90 /* BibleBook.swift in Sources */,
 				87B0250A64E7D46913EB780B /* BibleView.swift in Sources */,

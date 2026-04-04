@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SongsView: View {
     @EnvironmentObject private var player: AudioPlayer
+    @EnvironmentObject private var langSettings: LanguageSettings
     @State private var songs: [PubMediaTrack] = []
     @State private var loading = true
 
@@ -37,12 +38,17 @@ struct SongsView: View {
             }
             .navigationTitle("Kingdom Songs")
             .task { await loadSongs() }
+            .onChange(of: langSettings.language) { _ in
+                songs = []
+                loading = true
+                Task { await loadSongs() }
+            }
         }
     }
 
     private func loadSongs() async {
         guard songs.isEmpty else { return }
-        if let tracks = await JWAPIService.shared.ensureSongs() {
+        if let tracks = await JWAPIService.shared.ensureSongs(language: langSettings.language) {
             songs = tracks.sorted { $0.track < $1.track }
         }
         loading = false

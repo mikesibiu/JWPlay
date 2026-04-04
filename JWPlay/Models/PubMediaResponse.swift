@@ -6,8 +6,21 @@ struct PubMediaResponse: Codable {
     let files: LanguageMap
 }
 
+// Decodes a dynamic language key (e.g. "E" or "M") from the files dictionary
 struct LanguageMap: Codable {
-    let E: FormatMap?
+    private var storage: [String: FormatMap] = [:]
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        storage = (try? container.decode([String: FormatMap].self)) ?? [:]
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(storage)
+    }
+
+    subscript(lang: String) -> FormatMap? { storage[lang] }
 }
 
 struct FormatMap: Codable {

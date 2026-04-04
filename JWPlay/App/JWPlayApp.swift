@@ -8,6 +8,7 @@ struct JWPlayApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(AudioPlayer.shared)
+                .environmentObject(LanguageSettings.shared)
         }
     }
 }

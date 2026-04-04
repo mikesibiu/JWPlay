@@ -53,8 +53,8 @@ struct WeekDate {
     // ISO week key e.g. "2026-W14"
     var isoKey: String {
         var cal = Calendar(identifier: .gregorian)
-        cal.firstWeekday = 2          // must match init's calendar
-        cal.minimumDaysInFirstWeek = 4 // ISO 8601 semantics
+        cal.firstWeekday = 2
+        cal.minimumDaysInFirstWeek = 4  // ISO 8601
         let year = cal.component(.yearForWeekOfYear, from: monday)
         let week = cal.component(.weekOfYear, from: monday)
         return String(format: "%04d-W%02d", year, week)
@@ -70,7 +70,6 @@ struct WeekDate {
     }
 
     // Watchtower issues to try: current month -1, -2, -3
-    // Uses byAdding to handle month underflow (Jan, Feb) correctly
     var watchtowerIssuesToTry: [String] {
         let cal = Calendar(identifier: .gregorian)
         return [1, 2, 3].map { offset in
@@ -81,7 +80,7 @@ struct WeekDate {
         }
     }
 
-    // Monday's day-of-month and month name
+    // Monday's day-of-month and English month name — used by WT/MWB matching
     var dayOfMonth: Int {
         Calendar(identifier: .gregorian).component(.day, from: monday)
     }
@@ -91,6 +90,12 @@ struct WeekDate {
         fmt.locale = Locale(identifier: "en_US")
         fmt.dateFormat = "MMMM"
         return fmt.string(from: monday)
+    }
+
+    // Romanian month name for Monday's month
+    var romanianMonthName: String {
+        let month = Calendar(identifier: .gregorian).component(.month, from: monday)
+        return AppLanguage.romanianMonthNames[month - 1]
     }
 
     // Display label "March 30 – April 5"
@@ -113,16 +118,22 @@ struct WeekDate {
     }
 
     // Does a MWB track title match this week?
-    // MWB track titles start on the Monday of the week (e.g. "April 6-12")
+    // MWB track titles use Monday's date (e.g. "April 6-12" for week of Monday April 6)
     func mwbTrackMatches(title: String) -> Bool {
         title.hasPrefix("\(monthName) \(dayOfMonth)")
     }
 
-    // Does a Watchtower track title match this week? e.g. "(March 30 - April 5)"
-    // \\( matches the literal '(' in titles like "...Speak the Truth Graciously (March 30 - April 5)"
-    // [^0-9] prevents "March 9" from matching "March 19"
-    func watchtowerTrackMatches(title: String) -> Bool {
-        let pattern = "\\(\(monthName) \(dayOfMonth)[^0-9]"
-        return title.range(of: pattern, options: .regularExpression) != nil
+    // Does a Watchtower track title match this week?
+    // English: "...Speak the Truth Graciously (March 30 - April 5)" → \\(March 30[^0-9]
+    // Romanian: "...Cum ne putem... (6-12 aprilie)" → \\(6[^0-9].*aprilie
+    func watchtowerTrackMatches(title: String, language: AppLanguage) -> Bool {
+        switch language {
+        case .english:
+            let pattern = "\\(\(monthName) \(dayOfMonth)[^0-9]"
+            return title.range(of: pattern, options: .regularExpression) != nil
+        case .romanian:
+            let pattern = "\\(\(dayOfMonth)[^0-9].*\(romanianMonthName)"
+            return title.range(of: pattern, options: .regularExpression) != nil
+        }
     }
 }

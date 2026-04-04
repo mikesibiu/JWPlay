@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MeetingsView: View {
     @EnvironmentObject private var player: AudioPlayer
+    @EnvironmentObject private var langSettings: LanguageSettings
     @State private var schedules: [WeekOffset: WeeklySchedule] = [:]
     @State private var loading: Set<WeekOffset> = []
     @State private var selected: WeekOffset = .current
@@ -32,6 +33,10 @@ struct MeetingsView: View {
             }
             .navigationTitle("Weekly Meetings")
             .task(id: selected) { await loadSchedule(for: selected) }
+            .onChange(of: langSettings.language) { _ in
+                schedules = [:]
+                Task { await loadSchedule(for: selected) }
+            }
         }
     }
 
@@ -41,13 +46,14 @@ struct MeetingsView: View {
         defer { loading.remove(offset) }
 
         let weekDate = WeekDate(offset: offset)
-        if let cached = CacheService.shared.cachedSchedule(for: weekDate.isoKey) {
+        let lang = langSettings.language
+        if let cached = CacheService.shared.cachedSchedule(for: weekDate.isoKey, language: lang) {
             schedules[offset] = cached
             return
         }
-        let schedule = await JWAPIService.shared.buildWeeklySchedule(for: weekDate)
+        let schedule = await JWAPIService.shared.buildWeeklySchedule(for: weekDate, language: lang)
         if schedule.hasAnyContent {
-            CacheService.shared.cache(schedule: schedule, for: weekDate.isoKey)
+            CacheService.shared.cache(schedule: schedule, for: weekDate.isoKey, language: lang)
         }
         schedules[offset] = schedule
     }

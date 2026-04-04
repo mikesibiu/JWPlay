@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct BibleView: View {
+    @EnvironmentObject private var langSettings: LanguageSettings
     @State private var nwtTracks: [PubMediaTrack] = []
     @State private var loading = true
     @State private var testament: BibleBook.Testament = .hebrew
@@ -24,6 +25,11 @@ struct BibleView: View {
             }
             .navigationTitle("Bible")
             .task { await loadNWT() }
+            .onChange(of: langSettings.language) { _ in
+                nwtTracks = []
+                loading = true
+                Task { await loadNWT() }
+            }
         }
     }
 
@@ -54,7 +60,7 @@ struct BibleView: View {
 
     private func loadNWT() async {
         guard nwtTracks.isEmpty else { return }
-        if let tracks = await JWAPIService.shared.ensureNWT() {
+        if let tracks = await JWAPIService.shared.ensureNWT(language: langSettings.language) {
             nwtTracks = tracks
         }
         loading = false
