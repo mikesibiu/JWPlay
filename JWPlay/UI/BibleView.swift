@@ -71,13 +71,6 @@ struct BibleView: View {
         .listStyle(.plain)
     }
 
-    private func loadNWT() async {
-        guard nwtTracks.isEmpty else { return }
-        if let tracks = await JWAPIService.shared.ensureNWT(language: langSettings.language) {
-            nwtTracks = tracks
-        }
-        loading = false
-    }
 }
 
 // MARK: - Chapter groups / direct chapter list

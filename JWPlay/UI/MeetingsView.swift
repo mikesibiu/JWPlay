@@ -36,9 +36,9 @@ struct MeetingsView: View {
             }
             .navigationTitle(lang.weeklyMeetings)
             .task(id: selected) { await loadSchedule(for: selected) }
-            .onChange(of: langSettings.language) { _ in
+            .task(id: langSettings.language) {
                 schedules = [:]
-                Task { await loadSchedule(for: selected) }
+                await loadSchedule(for: selected)
             }
         }
     }
