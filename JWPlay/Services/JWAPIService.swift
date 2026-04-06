@@ -223,7 +223,7 @@ actor JWAPIService {
                 let subtitle = item.publishedDate.map { dateFormatter.string(from: $0) } ?? ""
                 return BroadcastingTrack(
                     id: id,
-                    title: item.title ?? (isGB ? "Governing Body Update" : "JW Broadcasting"),
+                    title: item.title ?? (isGB ? language.governingBodyUpdate : language.broadcastingTitle),
                     subtitle: subtitle,
                     url: audioURL,
                     isGBUpdate: isGB

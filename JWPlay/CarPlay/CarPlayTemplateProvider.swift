@@ -54,7 +54,7 @@ final class CarPlayTemplateProvider {
     }
 
     private func showWeekContent(weekDate: WeekDate) async {
-        let loadingItem = CPListItem(text: "Loading…", detailText: weekDate.displayLabel)
+        let loadingItem = CPListItem(text: lang.loading, detailText: weekDate.displayLabel)
         let loadingTemplate = CPListTemplate(title: weekDate.displayLabel,
                                              sections: [CPListSection(items: [loadingItem])])
         interfaceController?.pushTemplate(loadingTemplate, animated: true, completion: nil)

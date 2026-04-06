@@ -212,6 +212,20 @@ enum AppLanguage: String, CaseIterable {
         case .romanian: return "Drame Biblice"
         }
     }
+    var governingBodyUpdate: String {
+        switch self {
+        case .english:  return "Governing Body Update"
+        case .french:   return "Mise à jour du Collège central"
+        case .romanian: return "Noutăți de la Corpul Guvernant"
+        }
+    }
+    var loading: String {
+        switch self {
+        case .english:  return "Loading…"
+        case .french:   return "Chargement…"
+        case .romanian: return "Se încarcă…"
+        }
+    }
     var bibleAndSongs: String {
         switch self {
         case .english:  return "Bible & Songs"
