@@ -20,7 +20,7 @@ struct MeetingsView: View {
                 .padding()
 
                 if loading.contains(selected) {
-                    ProgressView("Loading…")
+                    ProgressView(lang.loadingMeetings)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let schedule = schedules[selected] {
                     WeekContentView(schedule: schedule)

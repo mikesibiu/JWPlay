@@ -32,7 +32,7 @@ actor JWAPIService {
 
         // Bible reading URLs (in selected language)
         var bibleURLs: [URL] = []
-        var bibleTitle = "Bible Reading"
+        var bibleTitle = language.bibleReading
         if let range = wol?.bibleRange, let nwt = nwtAll {
             let chapters = nwt
                 .filter { $0.booknum == range.booknum &&
@@ -48,7 +48,7 @@ actor JWAPIService {
 
         // CBS URLs (in selected language)
         var cbsURLs: [URL] = []
-        var cbsTitle = "Congregation Bible Study"
+        var cbsTitle = language.congregationBibleStudy
         if let lessonNums = wol?.cbsLessons, !lessonNums.isEmpty, let lfb = lfbAll {
             cbsURLs = lessonNums.compactMap { num in
                 lfb.first { lfbLeadingNumber($0) == num }?.url
@@ -69,9 +69,9 @@ actor JWAPIService {
             weekKey:           weekDate.isoKey,
             weekLabel:         weekDate.displayLabel,
             mwbURL:            mwbURL,
-            mwbTitle:          mwb?.title ?? "Meeting Workbook",
+            mwbTitle:          mwb?.title ?? language.meetingWorkbook,
             watchtowerURL:     wt?.url,
-            watchtowerTitle:   wt?.title ?? "Watchtower Study",
+            watchtowerTitle:   wt?.title ?? language.watchtowerStudy,
             bibleReadingURLs:  bibleURLs,
             bibleReadingTitle: bibleTitle,
             cbsURLs:           cbsURLs,

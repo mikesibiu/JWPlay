@@ -149,6 +149,13 @@ enum AppLanguage: String, CaseIterable {
         }
     }
 
+    var loadingMeetings: String {
+        switch self {
+        case .english:  return "Loading meetings…"
+        case .french:   return "Chargement des réunions…"
+        case .romanian: return "Se încarcă ședințele…"
+        }
+    }
     var loadingBible: String {
         switch self {
         case .english:  return "Loading Bible catalog…"
